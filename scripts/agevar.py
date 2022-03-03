@@ -5,7 +5,7 @@ import rospy
 
 def talker():
 	rospy.init_node('agevar')
-	rate = rospy.Rate(10) #frecuency in hertz
+	rate = rospy.Rate(50) #frecuency in hertz
 
 	rospy.loginfo("Hello! agevar node started!")
 
