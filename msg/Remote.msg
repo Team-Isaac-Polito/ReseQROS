@@ -1,0 +1,2 @@
+float64 vel_avanzamento
+float64 curvatura
