@@ -75,7 +75,7 @@ def talker():
 	maptool.start()
 
 	while True:
-    	socketio.sleep(.0100)
+		socketio.sleep(.0100)
 
 
 if __name__ == '__main__':
