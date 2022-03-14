@@ -51,6 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
 #AG
     Remote.msg
+    Motor.msg
 #   Message1.msg
 #   Message2.msg
  )
