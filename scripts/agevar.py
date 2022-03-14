@@ -3,6 +3,8 @@
 import rospy
 import constant as const
 
+#prova di commit
+
 # Variabili globali
 trigger = 1 #Dopo che è le velocità sono state ritardate per la prima volta, il ritardo viene mantenuto. Questo flag fa
 			#in modo che non venga ricalcolato
