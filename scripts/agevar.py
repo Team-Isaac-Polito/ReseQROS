@@ -2,6 +2,7 @@
 
 import rospy
 import constant as const
+from ReseQROS.msg import Remote, Motor
 
 #prova di commit
 
@@ -10,9 +11,7 @@ trigger = 1 #Dopo che è le velocità sono state ritardate per la prima volta, i
 			#in modo che non venga ricalcolato
 ritardo = [0] * (const.N_MOD)	#Vettore dei ritardi. Ogni cella corrisponde al ritardo del modulo associato all'indice
 puntatore_file = [0] * (const.N_MOD)
-nomi_file = [None] * (const.N_MOD) 	#Nome dei file associati ad ogni modulo. Credo che non servirà più quanto sostituiremo la
-									#scrittura sul file con la pubblicazione dei token
-
+nomi_file = [None] * (const.N_MOD) 	#Nome dei file associati ad ogni modulo.
 
 # Creazione e formattazione dei file sulla quale verranno salvati i dati dei diversi moduli.
 # Un file per ogni modulo, il cui nome viene salvato di un array di stringhe. La cella dell'array corrisponde al modulo
@@ -21,19 +20,6 @@ def reset_file():
     for i in range(const.N_MOD):
         nomi_file[i] = const.FILE_PATH+str(i)+".txt"
         open(nomi_file[i], 'w').close()
-
-# Fuzione per leggere i valori dal telecomando (attualmente li legge da tastiera) ed effettuata dei semplici controlli
-def lettura_valori_da_telecomando():
-
-    velocita = float(input("V [m/s]: "))
-    curvatura = float(input("C (conpresa tra 0 e 1): "))
-
-    #Controlli
-    if(curvatura > 1 or curvatura < 0):
-        print("Il valore della curvatura non è corretto")
-        exit
-
-    return velocita, curvatura
 
 # Dati in ingresso le coordinate del telecomando calcola i valori di riferimento usando le formule proposte
 def calcolo_valori(velocita, curvatura):
@@ -57,22 +43,44 @@ def invio_token_v2(vdx, vsx, angle, index):
         f.close()
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
-def assegnazione_velocità():
+#La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic remote_control
+def assegnazione_velocità(remote_data):
     global trigger
     global ritardo
     global puntatore_file
     global nomi_file
 
-    vel, curv = lettura_valori_da_telecomando()
-    vdx, vsx, angle = calcolo_valori(vel, curv)
-    invio_token(vdx, vsx, angle, 0) # TODO: aggiungere oltre a questa riga di codice, il codice necessario per inviare al token
-                                    # i valori di riferimento del primo modulo
+    #definizione variabili strutturate per ROS
+    pub={}
+    motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
+
+    #inizializzazione variabili publisher
+    for i in range(0,const.N_MOD):
+        pub[i]=rospy.Publisher("motor_topic_"+str(i),Motor,queue_size=10)
+
+    #dati letti sul topic remote_control
+    vel = remote_data.vel_avanzamento
+    curv = remote_data.curvatura
+
+    #calcolo e log dei valori da passare al modulo di testa
+    vdx, vsx, angle = calcolo_valori(vel, curv)   
+    rospy.loginfo("da definire")
+
+    #salvataggio valori calcolati
+    invio_token(vdx, vsx, angle, 0)
+                                    
+    #trasmissione dei valori calcolati per il modulo di testa come messaggio Motor() sul topic motor_topic_1
+    motor_msg.vdx = vdx
+    motor_msg.vsx = vsx
+    motor_msg.angle = angle
+    pub[0].publish(motor_msg)
 
     # Controllo se la velocità arrivata come input è nulla, indipendentemente dal valore della curvatura (nel caso in cui
     # si fermasse in curva).
     if (vel == 0):
         for i in range(1,const.N_MOD):
             # TODO: Inserire codice per inviare token per ogni modulo successivo al primo
+            #       Che valori vanno inviati???
             print("%f %f %f\n" %(vdx,vsx,angle))
         return None # Termina l'iterazione per proseguire alla successiva.
 
@@ -93,12 +101,13 @@ def assegnazione_velocità():
             with open(nomi_file[i], 'r') as f:  # Leggo da file i valori e li invio al token.
                 data = f.read()
                 f.close()
+
                 data = data.split()
-                vdx_2 = float(data[0])
-                vsx_2 = float(data[1])
-                angle_2 = float(data[2])
-                invio_token_v2(vdx_2, vsx_2, angle_2, i)    # TODO: questa riga va sostituita con il codice per inviare
-                                                            # i valori al token.
+                motor_msg.vdx = float(data[0])
+                motor_msg.vsx = float(data[1])
+                motor_msg.angle = float(data[2])
+                pub[i].publish(motor_msg)
+                
         else:
             # Siamo nella condizione in cui il ritardo del modulo i-esimo è pari a 0, quindi ogni modulo legge
             # i valori di riferimento dal file del primo modulo, aggiornado il puntatore del file alla riga successiva
@@ -109,33 +118,41 @@ def assegnazione_velocità():
                 data = f.readline()
                 puntatore_file[i] = f.tell()
                 f.close()
+
+                #salvataggio dati
                 data = data.split()
                 vdx_2 = float(data[0])
                 vsx_2 = float(data[1])
                 angle_2 = float(data[2])
                 invio_token_v2(vdx_2, vsx_2, angle_2, i)
-                # TODO: In questo caso la riga di codice 'invio_token_v2' non va sostituita, in quanto necessaria
-                # per memorizzare nel file i valori di riferimento, che verranno letti nel caso in cui il ritardo del
-                # modulo fosse maggiore di 0
+
+                #pubblicazione dati
+                motor_msg.vdx = vdx_2
+                motor_msg.vsx = vsx_2
+                motor_msg.angle = angle_2
+                pub[i].publish(motor_msg)
+
                 ritardo[i] = 0
 
-def talker():
+#legge i comandi di alto livello sul topic remote_topic e
+#applica la funzione assegnazione_velocità se sono disponibili dati sul topic remote_control
+def listener():
+	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+
+def main_function():
 	reset_file()
 	rospy.init_node('agevar')
-	rate = rospy.Rate(50) #frecuency in hertz
+	rate = rospy.Rate(const.FREQ) #frecuency in hertz
 
 	rospy.loginfo("Hello! agevar node started!")
 
 	while not rospy.is_shutdown():
 		rospy.loginfo("agevar node working")
-		#ToDo
-		# - check if something to read on topic
-		assegnazione_velocità()
-		# - publish output data on topic
+		listener()
 		rate.sleep()
 
 if __name__ == '__main__':
 	try:
-		talker()
+		main_function()
 	except rospy.ROSInterruptException:
 		pass
