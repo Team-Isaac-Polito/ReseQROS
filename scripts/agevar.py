@@ -19,7 +19,11 @@ def reset_file():
     global nomi_file
     for i in range(const.N_MOD):
         nomi_file[i] = const.FILE_PATH+str(i)+".txt"
-        open(nomi_file[i], 'w').close()
+        
+        with open(nomi_file[i], 'w') as f:
+            f.write("0 0 0\n")  #Inizializzazione dei file di salvataggio dati (inizializzazione necessaria in caso di ritardo>0 per richiamare i dati dai file)
+            f.close()
+            
 
 # Dati in ingresso le coordinate del telecomando calcola i valori di riferimento usando le formule proposte
 def calcolo_valori(velocita, curvatura):
