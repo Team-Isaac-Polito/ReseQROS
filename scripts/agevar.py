@@ -79,9 +79,14 @@ def assegnazione_velocità(remote_data):
     # si fermasse in curva).
     if (vel == 0):
         for i in range(1,const.N_MOD):
-            # TODO: Inserire codice per inviare token per ogni modulo successivo al primo
-            #       Che valori vanno inviati???
-            print("%f %f %f\n" %(vdx,vsx,angle))
+            # Nel caso di velocità nulla, anche tutti gli altri motori dovranno fermarsi, mantenedo comunqune l'angolo tra i moduli.
+            # Questa operazione non viene salvata nel file, in modo tale da mantenere memorizzati i dati prima che il robot si fermasse, e rileggerli
+            # non appena riprende il moto.
+            motor_msg.vdx = vdx
+            motor_msg.vsx = vsx
+            motor_msg.angle = angle
+            pub[i].publish(motor_msg)
+
         return None # Termina l'iterazione per proseguire alla successiva.
 
     # Ritardo
