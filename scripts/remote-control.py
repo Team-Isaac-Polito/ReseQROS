@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import rospy
-from ReseQROS.msg import Remote
+#from ReseQROS.msg import Remote
+from std_msgs.msg import String
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -20,8 +21,8 @@ app.config['SECRET_KEY'] = 'secret'
 CORS(app)
 socketio = SocketIO(app)
 
-pub = rospy.Publisher('custom_chatter', Remote)
-msg = Remote()
+pub = rospy.Publisher('custom_chatter', String)
+#msg = Remote()
 
 
 @app.route('/')
@@ -32,8 +33,8 @@ def index():
 @socketio.on_error_default
 def default_error_handler(e):
     print ("======================= ERROR")
-    print(request.event["message"])
-    print(request.event["args"])
+#    print(request.event["message"])
+#    print(request.event["args"])
 
 
 @socketio.on('control', namespace='/control')
@@ -41,12 +42,12 @@ def control(message):
 	if "left" in message["data"].keys():
 		global data
 		data = message["data"]["left"]
-		msg.vel_avanzamento = float(data[0])
-		msg.curvatura = float(data[1])
+#		msg.vel_avanzamento = float(data[0])
+#		msg.curvatura = float(data[1])
+		str = "Remote control: Left joystick: ",data[0],",",data[1]
+		if _debug: rospy.loginfo (str)
 
-		if _debug: rospy.loginfo ("Remote control: Left joystick: ",data[0],",",data[1])
-		
-		pub.publish(msg)
+		pub.publish(str)
 
 
 class MapTool(object):
