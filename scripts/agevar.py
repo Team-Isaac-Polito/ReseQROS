@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 import constant as const
@@ -68,7 +68,7 @@ def assegnazione_velocità(remote_data):
 
     #calcolo e log dei valori da passare al modulo di testa
     vdx, vsx, angle = calcolo_valori(vel, curv)   
-    rospy.loginfo("da definire")
+    rospy.loginfo("vdx: %f, vsx: %f, angle: %f" % (vdx, vsx, angle))
 
     #salvataggio valori calcolati
     invio_token(vdx, vsx, angle, 0)
@@ -143,10 +143,10 @@ def assegnazione_velocità(remote_data):
 
                 ritardo[i] = 0
 
-#legge i comandi di alto livello sul topic remote_topic e
-#applica la funzione assegnazione_velocità se sono disponibili dati sul topic remote_control
+#legge i comandi di alto livello sul topic custom_chatter e
+#applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
 def listener():
-	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+	rospy.Subscriber("custom_chatter",Remote,assegnazione_velocità) # nome topic da cambiare
 
 def main_function():
 	reset_file()
