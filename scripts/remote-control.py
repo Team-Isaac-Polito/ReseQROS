@@ -21,7 +21,7 @@ app.config['SECRET_KEY'] = 'secret'
 CORS(app)
 socketio = SocketIO(app)
 
-pub = rospy.Publisher('custom_chatter', String)
+pub = rospy.Publisher('remote_topic', String)
 #msg = Remote()
 
 
