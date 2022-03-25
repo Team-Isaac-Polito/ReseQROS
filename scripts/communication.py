@@ -3,22 +3,24 @@
 import rospy
 
 
-def talker():
-	rospy.init_node('communication')
-	rate = rospy.Rate(50) #frecuency in hertz - should be the same as agevar node (or more(?)) 
 
-	rospy.loginfo("Hello! communication node started!")
 
-	while not rospy.is_shutdown():
-		rospy.loginfo("communication node working")
-		#ToDo
-		# - check if something to read on topic
-		# - send data to pico
 
-		rate.sleep()
+def invio_dati(data):
+	rospy.loginfo("DataToSend:\nADDR: " + data.address + "\nVSX: " + data.vsx + "\nVDX: " + data.vdx + "\nANGLE: " + angle)
+
 
 if __name__ == '__main__':
 	try:
-		talker()
+		rospy.init_node('communication')
+		rate = rospy.Rate(50) #frecuency in hertz - should be the same as agevar node (or more(?)) 
+
+		rospy.loginfo("Hello! communication node started!")
+
+		rospy.Subscriber("motor_topic",Motor,invio_dati)
+
+		rospy.spin()
+		
+
 	except rospy.ROSInterruptException:
 		pass

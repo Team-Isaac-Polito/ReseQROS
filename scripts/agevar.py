@@ -55,12 +55,8 @@ def assegnazione_velocità(remote_data):
     global nomi_file
 
     #definizione variabili strutturate per ROS
-    pub={}
+    pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
-
-    #inizializzazione variabili publisher
-    for i in range(0,const.N_MOD):
-        pub[i]=rospy.Publisher("motor_topic_"+str(i),Motor,queue_size=10)
 
     #dati letti sul topic remote_control
     vel = remote_data.vel_avanzamento
@@ -77,7 +73,8 @@ def assegnazione_velocità(remote_data):
     motor_msg.vdx = vdx
     motor_msg.vsx = vsx
     motor_msg.angle = angle
-    pub[0].publish(motor_msg)
+    motor_msg.address = const.ADDRESSES[0]
+    pub.publish(motor_msg)
 
     # Controllo se la velocità arrivata come input è nulla, indipendentemente dal valore della curvatura (nel caso in cui
     # si fermasse in curva).
@@ -89,7 +86,9 @@ def assegnazione_velocità(remote_data):
             motor_msg.vdx = vdx
             motor_msg.vsx = vsx
             motor_msg.angle = angle
-            pub[i].publish(motor_msg)
+            motor_msg.address = const.ADDRESSES[i]
+
+            pub.publish(motor_msg)
 
         return None # Termina l'iterazione per proseguire alla successiva.
 
@@ -112,10 +111,12 @@ def assegnazione_velocità(remote_data):
                 f.close()
 
                 data = data.split()
-                motor_msg.vdx = float(data[0])
-                motor_msg.vsx = float(data[1])
-                motor_msg.angle = float(data[2])
-                pub[i].publish(motor_msg)
+                motor_msg.vdx = int(data[0])
+                motor_msg.vsx = int(data[1])
+                motor_msg.angle = int(data[2])
+                motor_msg.address = const.ADDRESSES[i]
+
+                pub.publish(motor_msg)
                 
         else:
             # Siamo nella condizione in cui il ritardo del modulo i-esimo è pari a 0, quindi ogni modulo legge
@@ -130,35 +131,39 @@ def assegnazione_velocità(remote_data):
 
                 #salvataggio dati
                 data = data.split()
-                vdx_2 = float(data[0])
-                vsx_2 = float(data[1])
-                angle_2 = float(data[2])
+                vdx_2 = int(data[0])
+                vsx_2 = int(data[1])
+                angle_2 = int(data[2])
                 invio_token_v2(vdx_2, vsx_2, angle_2, i)
 
                 #pubblicazione dati
                 motor_msg.vdx = vdx_2
                 motor_msg.vsx = vsx_2
                 motor_msg.angle = angle_2
-                pub[i].publish(motor_msg)
+                motor_msg.address = const.ADDRESSES[i]
+
+                pub.publish(motor_msg)
 
                 ritardo[i] = 0
 
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
 def listener():
-	rospy.Subscriber("custom_chatter",Remote,assegnazione_velocità) # nome topic da cambiare
+	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
 
 def main_function():
 	reset_file()
 	rospy.init_node('agevar')
-	rate = rospy.Rate(const.FREQ) #frecuency in hertz
+	#rate = rospy.Rate(const.FREQ) #frecuency in hertz
 
 	rospy.loginfo("Hello! agevar node started!")
+    listener()
+    rospy.spin()
 
-	while not rospy.is_shutdown():
-		rospy.loginfo("agevar node working")
-		listener()
-		rate.sleep()
+	#while not rospy.is_shutdown():
+	#	rospy.loginfo("agevar node working")
+	#	listener()
+	#	rate.sleep()
 
 if __name__ == '__main__':
 	try:
