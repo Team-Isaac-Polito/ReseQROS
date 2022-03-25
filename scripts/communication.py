@@ -4,7 +4,7 @@ import rospy
 from ReseQROS.msg import Motor
 
 def invio_dati(data):
-	rospy.loginfo("DataToSend:\nADDR: " + data.address + "\nVSX: " + data.vsx + "\nVDX: " + data.vdx + "\nANGLE: " + angle)
+	rospy.loginfo("DataToSend:\nADDR: " + str(data.address) + "\nVSX: " + str(data.vsx) + "\nVDX: " + str(data.vdx) + "\nANGLE: " + str(data.angle))
 
 
 if __name__ == '__main__':
