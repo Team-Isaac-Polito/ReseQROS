@@ -38,12 +38,12 @@ def calcolo_valori(velocita, curvatura):
 def invio_token(vdx, vsx, angle, index):
     global nomi_file
     with open(nomi_file[index], 'a') as f:
-        f.write("%f %f %f\n" %(vdx,vsx,angle))
+        f.write("%d %d %d\n" %(vdx,vsx,angle))
         f.close()
 def invio_token_v2(vdx, vsx, angle, index):
     global nomi_file
     with open(nomi_file[index], 'w') as f:
-        f.write("%f %f %f\n" %(vdx,vsx,angle))
+        f.write("%d %d %d\n" %(vdx,vsx,angle))
         f.close()
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
@@ -64,7 +64,7 @@ def assegnazione_velocità(remote_data):
 
     #calcolo e log dei valori da passare al modulo di testa
     vdx, vsx, angle = calcolo_valori(vel, curv)   
-    rospy.loginfo("vdx: %f, vsx: %f, angle: %f" % (vdx, vsx, angle))
+    rospy.loginfo("vdx: %d, vsx: %d, angle: %d" % (vdx, vsx, angle))
 
     #salvataggio valori calcolati
     invio_token(vdx, vsx, angle, 0)
