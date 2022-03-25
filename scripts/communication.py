@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
-
-
-
-
+from ReseQROS.msg import Motor
 
 def invio_dati(data):
 	rospy.loginfo("DataToSend:\nADDR: " + data.address + "\nVSX: " + data.vsx + "\nVDX: " + data.vdx + "\nANGLE: " + angle)

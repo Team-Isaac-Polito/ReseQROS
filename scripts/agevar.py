@@ -157,8 +157,8 @@ def main_function():
 	#rate = rospy.Rate(const.FREQ) #frecuency in hertz
 
 	rospy.loginfo("Hello! agevar node started!")
-    listener()
-    rospy.spin()
+	listener()
+	rospy.spin()
 
 	#while not rospy.is_shutdown():
 	#	rospy.loginfo("agevar node working")
