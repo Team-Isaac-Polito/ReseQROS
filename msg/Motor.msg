@@ -1,3 +1,4 @@
-float64 vdx
-float64 vsx
-float64 angle
+int32 vdx
+int32 vsx
+int32 angle
+uint8 address
