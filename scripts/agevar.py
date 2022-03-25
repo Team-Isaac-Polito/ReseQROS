@@ -28,9 +28,9 @@ def reset_file():
 # Dati in ingresso le coordinate del telecomando calcola i valori di riferimento usando le formule proposte
 def calcolo_valori(velocita, curvatura):
 
-    vsx = velocita*(1-curvatura)
-    vdx = velocita*curvatura
-    angle = 2*(curvatura-0.5)*const.ANGLE_MAX
+    vsx = int(velocita*(1-curvatura))
+    vdx = int(velocita*curvatura)
+    angle = int(2*(curvatura-0.5)*const.ANGLE_MAX)
 
     return vdx, vsx, angle
 
