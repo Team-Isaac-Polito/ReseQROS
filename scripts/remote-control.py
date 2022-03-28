@@ -21,7 +21,6 @@ app.config['SECRET_KEY'] = 'secret'
 CORS(app)
 socketio = SocketIO(app)
 
-pub = rospy.Publisher('remote_topic', String)
 #msg = Remote()
 
 
@@ -33,12 +32,14 @@ def index():
 @socketio.on_error_default
 def default_error_handler(e):
     print ("======================= ERROR")
+    print(e)
 #    print(request.event["message"])
 #    print(request.event["args"])
 
 
 @socketio.on('control', namespace='/control')
 def control(message):
+	global pub
 	if "left" in message["data"].keys():
 		global data
 		data = message["data"]["left"]
@@ -67,7 +68,11 @@ class MapTool(object):
 
 
 def talker():
-	rospy.init_node('remote-control')
+	global pub
+	rospy.init_node('controllo-remoto')
+
+	pub = rospy.Publisher('remote_topic', String)
+
 
 	rospy.loginfo("Hello! remote-control node started!")
 
