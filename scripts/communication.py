@@ -3,14 +3,15 @@
 import rospy
 from ReseQROS.msg import Motor
 import smbus as smbus
-
+import struct
 
 def writeNumbers(addr,values):
+    global I2Cbus
     byteList = []
     for value in values:
         byteList += list(struct.pack('f', value))
     byteList.append(0)  # fails to send last byte over I2C, hence this needs to be added 
-    bus.write_i2c_block_data(addr, byteList[0], byteList[1:12])
+    I2Cbus.write_i2c_block_data(addr, byteList[0], byteList[1:12])
 
 
 
@@ -22,6 +23,7 @@ def invio_dati(data):
 
 
 if __name__ == '__main__':
+	global I2Cbus
 	try:
 		I2Cbus = smbus.SMBus(1)
 
