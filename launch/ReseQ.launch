@@ -1,5 +1,6 @@
 <launch>
 	<node name="remote_control" pkg="ReseQROS" type="remote-control.py" output="screen"/>
-	<node name="agevar" pkg="ReseQROS" type="agevar.py" output="screen"/>
+<!--	<node name="agevar" pkg="ReseQROS" type="agevar.py" output="screen"/>-->
+	<node name="agevar" pkg="ReseQROS" type="temporary_agevar.py" output="screen"/>
 	<node name="communication" pkg="ReseQROS" type="communication.py" output="screen"/>
 </launch>
