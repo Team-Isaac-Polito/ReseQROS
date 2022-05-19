@@ -3,6 +3,12 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Questo codice esegue il calcolo della posizione attraverso la computazione dell'integrale discreto
+# x(k+1) = x(k) + dx(k)*Ts
+# dove x(k+1) corrisponde al valore della posizione al tempo k+1, x(k) il valore della posizione al tempo attuale k, e 
+# dx(k) è la derivata della posizione, quindi la velocità (nel nostro caso velocità angolare) che è passato come input
+# Ts è il periodo che intercorre tra la ricezione di un valore dal joystick riferito alla velocità angolare
+
 def calcola_posizione(ang_vel,index):
     global Ts_joystick
     global position_list
@@ -10,9 +16,8 @@ def calcola_posizione(ang_vel,index):
     position_list.append(new_pos)
 
 
-
 file = open("C:\\Users\\richi\Documents\GitHub\ReseQROS\scripts\\agevar_v2\\velocità_angolari.txt","r")
-Ts_joystick = 1/const.JOYSTICK_FREQ
+Ts_joystick = 1/const.JOYSTICK_FREQ #la frequenza scelta è del tutto casuale, non è quella vera
 
 position_list = [0]
 ang_vel_list = [0]
@@ -31,7 +36,7 @@ file.close()
 if (len(position_list)!=len(ang_vel_list)):
     print("Errore, la dimensione dei due vettori non è la stessa")
 
-#x = np.linspace(0,len(position_list),Ts_joystick)
+#Plot dei risultati
 plt.plot(position_list)
 plt.plot(ang_vel_list)
 plt.title("Plot della velocità angolare e relativa posizione")
