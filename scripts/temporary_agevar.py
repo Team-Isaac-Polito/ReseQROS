@@ -33,7 +33,7 @@ def calcolo_valori(remote_data):
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
 def listener():
-	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+	rospy.Subscriber("remote_topic",Remote,calcolo_valori) # nome topic da cambiare
 
 def main_function():
     global pub
@@ -48,7 +48,7 @@ def main_function():
 	listener()
 
 if __name__ == '__main__':
-	try:
+    try:
 		main_function()
 	except rospy.ROSInterruptException:
 		pass
