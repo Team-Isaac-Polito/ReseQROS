@@ -71,6 +71,8 @@ def agevar_module_1():
         general_index+=1
 
 
+
+# TODO: Provare con lettura di dati da file, quindi creare anche un file contenente i valori e nominalo 'dati_in_input.dat'
 # TODO: Creare il main contenente anche le funzioni necessarie per ROS e connetterlo ad un telecomando per testare
 #       il suo funzionamento
 
