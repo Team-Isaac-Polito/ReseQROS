@@ -1,6 +1,6 @@
 # Constant
 
-N_MOD = 3           #Number of modules of the robot
+N_MOD = 1           #Number of modules of the robot
 
 ANGLE_MAX = 35      #Is the maximum angle between two moduless
 
