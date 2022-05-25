@@ -1,4 +1,4 @@
-int32 vdx
-int32 vsx
-int32 angle
+int32 wdx
+int32 wsx
+int32 wi
 uint8 address
