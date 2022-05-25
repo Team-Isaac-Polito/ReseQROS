@@ -14,3 +14,5 @@ ADDRESSES = [ 21, 48, 69 ] # 0x15, 0x30, 0x45
 
 JOYSTICK_FREQ = 20  #Frequenza con cui acquisiamo i dati dal joystick
 
+d=2 #[m] interasse
+r=1 #[m] raggio delle ruote equivalenti

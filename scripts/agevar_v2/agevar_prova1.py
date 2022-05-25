@@ -50,6 +50,12 @@ def velocità_lineari(xd1, yd1, phi1, v1):
     yd1.append(yd1_new_value)
     return xd1, yd1
 
+def velocità_motori(ang_vel,lin_vel):
+    wdx = (lin_vel[-1]+ang_vel[-1]*const.d/2)/const.r
+    wsx = (lin_vel[-1]-ang_vel[-1]*const.d/2)/const.r
+    wi = 0
+    return wdx, wsx, wi
+
 def agevar_module_1(ang_vel, lin_vel):
     global phi1, phid1, x1, y1, xd1, yd1, v1
 
@@ -60,12 +66,10 @@ def agevar_module_1(ang_vel, lin_vel):
     velocità_lineari(xd1, yd1, phi1, v1) # Calcolo xd1 e yd1
     integrale_discreto(x1, xd1)  # Calcolo di x1
     integrale_discreto(y1, yd1)  # Calcolo di y1
+    rospy.loginfo("phi1: %f, phid1: %f, x1: %f, y1: %f, xd1: %f, yd1: %f, v1: %f" % (phi1[-1], phid1[-1], x1[-1], y1[-1], xd1[-1], yd1[-1], v1[-1]))
+    #TODO da togliere rospy.loginfo
 
-    #TODO ang_vel, lin_vel -> wdx, wsx, wi
-
-    wdx=1.1 #TODO esempio, è da cambiare
-    wsx=2.1 #TODO esempio, è da cambiare
-    wi=0
+    wdx, wsx, wi = velocità_motori(phid1,v1)
 
     return wdx, wsx, wi
 
