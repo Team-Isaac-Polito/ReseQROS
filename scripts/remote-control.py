@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import rospy
-#from ReseQROS.msg import Remote
-from std_msgs.msg import String
+from ReseQROS.msg import Remote
+#from std_msgs.msg import String
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -43,12 +43,13 @@ def control(message):
 	if "left" in message["data"].keys():
 		global data
 		data = message["data"]["left"]
-#		msg.vel_avanzamento = float(data[0])
-#		msg.curvatura = float(data[1])
+		msg = Remote()
+		msg.vel_avanzamento = float(data[0])
+		msg.curvatura = float(data[1])
+
 		str = "Remote control: Left joystick: ",data[0],",",data[1]
 		if _debug: rospy.loginfo (str)
-
-		pub.publish(str)
+		pub.publish(msg)
 
 
 class MapTool(object):
@@ -71,7 +72,7 @@ def talker():
 	global pub
 	rospy.init_node('controllo-remoto')
 
-	pub = rospy.Publisher('remote_topic', String)
+	pub = rospy.Publisher('remote_topic', Remote, queue_size=10)
 
 
 	rospy.loginfo("Hello! remote-control node started!")
@@ -80,8 +81,9 @@ def talker():
 	maptool = MapTool()
 	maptool.start()
 
+	#	rospy.spin()
 	while True:
-		socketio.sleep(.0100)
+		socketio.sleep(.00000100)
 
 
 if __name__ == '__main__':

@@ -13,6 +13,10 @@ ritardo = [0] * (const.N_MOD)	#Vettore dei ritardi. Ogni cella corrisponde al ri
 puntatore_file = [0] * (const.N_MOD)
 nomi_file = [None] * (const.N_MOD) 	#Nome dei file associati ad ogni modulo.
 
+actual_data = [0,0]
+#actual_data[vel_avanzamento]=0
+#actual_data[curvatura] = 0
+
 # Creazione e formattazione dei file sulla quale verranno salvati i dati dei diversi moduli.
 # Un file per ogni modulo, il cui nome viene salvato di un array di stringhe. La cella dell'array corrisponde al modulo
 def reset_file():
@@ -48,27 +52,28 @@ def invio_token_v2(vdx, vsx, angle, index):
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
 #La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic remote_control
-def assegnazione_velocità(remote_data):
+def assegnazione_velocita():
     global trigger
     global ritardo
     global puntatore_file
     global nomi_file
+    global actual_data
 
     #definizione variabili strutturate per ROS
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
 
     #dati letti sul topic remote_control
-    vel = remote_data.vel_avanzamento
-    curv = remote_data.curvatura
+    vel = actual_data[0]
+    curv = actual_data[1]
 
     #calcolo e log dei valori da passare al modulo di testa
-    vdx, vsx, angle = calcolo_valori(vel, curv)   
+    vdx, vsx, angle = calcolo_valori(vel, curv)
     rospy.loginfo("vdx: %d, vsx: %d, angle: %d" % (vdx, vsx, angle))
 
     #salvataggio valori calcolati
     invio_token(vdx, vsx, angle, 0)
-                                    
+
     #trasmissione dei valori calcolati per il modulo di testa come messaggio Motor() sul topic motor_topic_1
     motor_msg.vdx = vdx
     motor_msg.vsx = vsx
@@ -117,7 +122,7 @@ def assegnazione_velocità(remote_data):
                 motor_msg.address = const.ADDRESSES[i]
 
                 pub.publish(motor_msg)
-                
+
         else:
             # Siamo nella condizione in cui il ritardo del modulo i-esimo è pari a 0, quindi ogni modulo legge
             # i valori di riferimento dal file del primo modulo, aggiornado il puntatore del file alla riga successiva
@@ -148,22 +153,30 @@ def assegnazione_velocità(remote_data):
 
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
-def listener():
-	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+def ricevi_valori(remote_data):
+	global actual_data
+
+	actual_data[0] = remote_data.vel_avanzamento * 1000
+	actual_data[1] = remote_data.curvatura
+
 
 def main_function():
 	reset_file()
 	rospy.init_node('agevar')
-	#rate = rospy.Rate(const.FREQ) #frecuency in hertz
+	rate = rospy.Rate(const.FREQ) #frecuency in hertz
 
 	rospy.loginfo("Hello! agevar node started!")
-	listener()
-	rospy.spin()
 
-	#while not rospy.is_shutdown():
-	#	rospy.loginfo("agevar node working")
-	#	listener()
-	#	rate.sleep()
+	#listener
+	rospy.Subscriber("remote_topic",Remote,ricevi_valori) # nome topic da cambiare
+
+	while not rospy.is_shutdown():
+		rospy.loginfo("agevar node working")
+		assegnazione_velocita()
+		rate.sleep()
+
+#	rospy.spin()
+
 
 if __name__ == '__main__':
 	try:

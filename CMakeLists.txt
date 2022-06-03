@@ -52,8 +52,8 @@ find_package(catkin REQUIRED COMPONENTS
 #AG
     Remote.msg
     Motor.msg
-#   Message1.msg
-#   Message2.msg
+    Twist.msg
+    Vector3.msg
  )
 
 ## Generate services in the 'srv' folder

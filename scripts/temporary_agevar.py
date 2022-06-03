@@ -12,40 +12,41 @@ def calcolo_valori(remote_data):
     #dati letti sul topic remote_control
 
     #ToDo check riscalamento
-    velocita = remote_data.vel_avanzamento
-    curvatura = remote_data.curvatura
+    velocita = 1024*remote_data.vel_avanzamento
+    curvatura = remote_data.curvatura / 2
 
-    vsx = int(velocita*(1-curvatura))
-    vdx = int(velocita*curvatura)
-    angle = int(2*(curvatura-0.5)*const.ANGLE_MAX)
-    
+    vsx = int(velocita*(1+curvatura))
+    vdx = int(velocita*(1-curvatura))
+    angle = int(2*(curvatura)*const.ANGLE_MAX)
+
 
     #pubblicazione dati
     motor_msg.vdx = vdx
     motor_msg.vsx = vsx
     motor_msg.angle = angle
     motor_msg.address = const.ADDRESSES[0]
-
+    rospy.loginfo("sto per pubblicare")
     pub.publish(motor_msg)
-
-    return vdx, vsx, angle
+    rospy.loginfo("pubblicato!!!!")
+#    return vdx, vsx, angle
 
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
 def listener():
-	rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+    rospy.Subscriber("remote_topic",Remote,calcolo_valori) #nome topic da cambiare
 
 def main_function():
     global pub
     global motor_msg
 
-	rospy.init_node('agevar')
+    rospy.init_node('agevar')
     #definizione variabili strutturate per ROS
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
 
-	rospy.loginfo("Hello! agevar node started!")
-	listener()
+    rospy.loginfo("Hello! agevar node started!")
+    listener()
+    rospy.spin()
 
 if __name__ == '__main__':
 	try:
