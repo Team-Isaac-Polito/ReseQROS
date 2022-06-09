@@ -49,8 +49,11 @@ def invio_token_v2(vdx, vsx, angle, index):
 def controllo_input(vel, curv):
     velo = 512 if 462 < vel < 562 else vel
     curvo = 512 if 462 < curv < 562 else curv
-    vel = vel - 512
+    velo = velo - 512
     curvo = curvo - 512
+
+    print(velo,curvo)
+
     return velo, curvo
 	
 
@@ -158,7 +161,6 @@ def assegnazione_velocità(curv, vel):
                 ritardo[i] = 0
 
 def ros_annidato(vel):
-    print(vel.data)
     rospy.Subscriber("curv",UInt16,assegnazione_velocità,vel)
 
 #legge i comandi di alto livello sul topic custom_chatter e
