@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from zmq import curve_keypair
 import rospy
 import constant as const
 from ReseQROS.msg import Remote, Motor
@@ -28,10 +29,9 @@ def reset_file():
 # Dati in ingresso le coordinate del telecomando calcola i valori di riferimento usando le formule proposte
 def calcolo_valori(velocita, curvatura):
 
-    vsx = int(velocita*(1-curvatura))
-    vdx = int(velocita*curvatura)
-    angle = int(2*(curvatura-0.5)*const.ANGLE_MAX)
-
+    vsx = int(velocita + curvatura/2)
+    vdx = int(velocita - curvatura/2)
+    angle = int((curvatura-512)/512*const.ANGLE_MAX)
     return vdx, vsx, angle
 
 # Si occupano della scrittura dei valori su file, necessario per la memorizzazione e lettura dei valori precedenti
@@ -45,6 +45,13 @@ def invio_token_v2(vdx, vsx, angle, index):
     with open(nomi_file[index], 'w') as f:
         f.write("%d %d %d\n" %(vdx,vsx,angle))
         f.close()
+
+def controllo_input(vel, curv):
+    velo = 512 if 462 < vel < 562 else vel
+    curvo = 512 if 462 < curv < 562 else curv
+    vel = vel - 512
+    return velo, curvo
+	
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
 #La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic remote_control
@@ -61,6 +68,9 @@ def assegnazione_velocità(remote_data):
     #dati letti sul topic remote_control
     vel = remote_data.vel_avanzamento
     curv = remote_data.curvatura
+
+    vel, curv = controllo_input(vel, curv)
+
 
     #calcolo e log dei valori da passare al modulo di testa
     vdx, vsx, angle = calcolo_valori(vel, curv)   
