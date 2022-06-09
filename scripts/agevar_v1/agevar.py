@@ -3,6 +3,7 @@
 import rospy
 import constant as const
 from ReseQROS.msg import Remote, Motor
+from std_msgs.msg import UInt16
 
 #prova di commit
 
@@ -55,7 +56,7 @@ def controllo_input(vel, curv):
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
 #La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic remote_control
-def assegnazione_velocità(remote_data):
+def assegnazione_velocità(curv, args):
     global trigger
     global ritardo
     global puntatore_file
@@ -66,8 +67,8 @@ def assegnazione_velocità(remote_data):
     motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
 
     #dati letti sul topic remote_control
-    vel = remote_data.vel_avanzamento
-    curv = remote_data.curvatura
+    vel = args[0]
+    curv = curv
 
     vel, curv = controllo_input(vel, curv)
 
@@ -156,10 +157,13 @@ def assegnazione_velocità(remote_data):
 
                 ritardo[i] = 0
 
+def ros_annidato(vel):
+    rospy.Subscriber("curv",UInt16,assegnazione_velocità, (vel.data))
+
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
 def listener():
-    rospy.Subscriber("remote_topic",Remote,assegnazione_velocità) # nome topic da cambiare
+    rospy.Subscriber("vel",UInt16,ros_annidato) # nome topic da cambiare
 
 def main_function():
 	reset_file()
