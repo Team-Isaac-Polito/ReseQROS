@@ -49,6 +49,7 @@ def controllo_input(vel, curv):
     velo = 512 if 462 < vel < 562 else vel
     curvo = 512 if 462 < curv < 562 else curv
     vel = vel - 512
+    curvo = curvo - 512
     return velo, curvo
 	
 
