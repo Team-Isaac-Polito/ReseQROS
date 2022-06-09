@@ -52,8 +52,6 @@ def controllo_input(vel, curv):
     velo = velo - 512
     curvo = curvo - 512
 
-    print(velo,curvo)
-
     return velo, curvo
 	
 
@@ -72,8 +70,6 @@ def assegnazione_velocità(curv, vel):
     #dati letti sul topic remote_control
     vel = int(vel.data)
     curv = int(curv.data)
-
-    print(vel,curv)
 
     vel, curv = controllo_input(vel, curv)
 
