@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from zmq import curve_keypair
 import rospy
 import constant as const
 from ReseQROS.msg import Remote, Motor

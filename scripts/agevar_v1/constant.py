@@ -8,6 +8,6 @@ FREQ = 0.5          #[Herzt] Is the refresh rate of the program. Is you to deter
 
 DIST_MOD = 8        #Cm. Da cambiare, ne ho usato uno a caso perché non so quanto sia il dato reale
 
-FILE_PATH = "/home/andrea/agevarFiles/modulo_" # Percorso in cui verranno salvarti i file necessari al funzionamento del codice di agevar
+FILE_PATH = "/home/marco/agevarFiles/modulo_" # Percorso in cui verranno salvarti i file necessari al funzionamento del codice di agevar
 
 ADDRESSES = [ 21, 48, 69 ] # 0x15, 0x30, 0x45

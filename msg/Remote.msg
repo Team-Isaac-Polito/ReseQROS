@@ -1,2 +1,2 @@
-float64 vel_avanzamento
-float64 curvatura
+uint16 vel_avanzamento
+uint16 curvatura
