@@ -71,6 +71,8 @@ def assegnazione_velocità(curv, vel):
     vel = int(vel.data)
     curv = int(curv.data)
 
+    print(vel,curv)
+
     vel, curv = controllo_input(vel, curv)
 
 
