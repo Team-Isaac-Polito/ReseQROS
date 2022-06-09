@@ -30,7 +30,7 @@ def calcolo_valori(velocita, curvatura):
 
     vsx = int(velocita + curvatura/2)
     vdx = int(velocita - curvatura/2)
-    angle = int((curvatura-512)/512*const.ANGLE_MAX)
+    angle = int(curvatura/512*const.ANGLE_MAX)
     return vdx, vsx, angle
 
 # Si occupano della scrittura dei valori su file, necessario per la memorizzazione e lettura dei valori precedenti
