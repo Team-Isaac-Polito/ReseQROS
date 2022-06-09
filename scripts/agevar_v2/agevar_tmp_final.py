@@ -99,6 +99,4 @@ def model_1(y,t,num_module):
     dydt = ((yd_i_1*math.cos(y))-(xd_i_1*math.sin(y))-(const.a*math.cos(phi_i_1)*phid_i_1)*(math.cos(y)+math.sin(y)))/const.b
     return dydt
 
-     
-
 def agevar_module_i():

@@ -1,6 +1,8 @@
 # Constant
 
-N_MOD = 1           #Number of modules of the robot
+N_MOD = 3           # Number of modules of the robot
+
+N_VAR = 7           # Is the number of kinematic variables
 
 ANGLE_MAX = 35      # Is the maximum angle between two moduless
 
@@ -17,3 +19,5 @@ JOYSTICK_FREQ = 20  # Frequenza con cui acquisiamo i dati dal joystick
 a = 10              # Dimensione dell'interasse del modulo
 
 b = 10              # 
+
+

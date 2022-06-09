@@ -15,8 +15,6 @@ yd1 = sin(phi1) * v1
 x1 -> integrale discreto di xd1
 y1 -> integrale discreto di yd1
 
-
-@Riccardo Giacchino [301168] e @Marco Barbon []
 '''
 
 
@@ -27,7 +25,7 @@ def integrale_discreto(x,dx,index): # Funzione che esegue l'integrale discreto s
     new_value = x[index]+dx*Ts_joystick
     x.append(new_value)
 
-def velocità_lineari(phi1_i, v1_i):
+def velocità_lineare_modulo_1(phi1_i, v1_i):
     xd1 = math.cos(phi1_i)*v1_i
     yd1 = math.sin(phi1_i)*v1_i
     return xd1, yd1
@@ -70,7 +68,7 @@ def agevar_module_1():
 
         # Modulo 1
         integrale_discreto(phi_1, phid1_i, general_index)   # Calcolo di phi1_i
-        xd1, yd1 = velocità_lineari(phi_1[general_index], v1_i)
+        xd1, yd1 = velocità_lineare_modulo_1(phi_1[general_index], v1_i)
         integrale_discreto(x1, xd1, general_index)  # Calcolo di x1
         integrale_discreto(y1, yd1, general_index)  # Calcolo di y1
 

@@ -37,9 +37,22 @@ if (len(position_list)!=len(ang_vel_list)):
     print("Errore, la dimensione dei due vettori non è la stessa")
 
 #Plot dei risultati
+"""
 plt.plot(position_list)
 plt.plot(ang_vel_list)
 plt.title("Plot della velocità angolare e relativa posizione")
 plt.legend(['Posizione (phi)', 'Velocità angolare (phi_dot)'])
+plt.xlabel()
+plt.show()
+"""
+
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()
+ax1.plot(position_list, 'g-')
+ax2.plot(ang_vel_list, 'b-')
+ax1.set_xlabel('Iterazioni')
+ax2.set_ylabel('Posizione angolare [rad]', color='g')
+ax1.set_ylabel('Velocità angolare [rad/s]', color='b')
+plt.title("Plot della velocità angolare e relativa posizione")
 plt.show()
 
