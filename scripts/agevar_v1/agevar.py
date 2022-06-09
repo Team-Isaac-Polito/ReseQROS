@@ -56,7 +56,7 @@ def controllo_input(vel, curv):
 
 #Funzione principale per il calcolo delle velocità di ogni modulo. Si occupa di ritardare le velocità dei moduli
 #La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic remote_control
-def assegnazione_velocità(curv, args):
+def assegnazione_velocità(curv, vel):
     global trigger
     global ritardo
     global puntatore_file
@@ -67,8 +67,8 @@ def assegnazione_velocità(curv, args):
     motor_msg=Motor() #Motor.msg={vdx,vsx,angle}
 
     #dati letti sul topic remote_control
-    vel = args[0]
-    curv = curv
+    vel = int(vel.data)
+    curv = int(curv.data)
 
     vel, curv = controllo_input(vel, curv)
 
@@ -158,7 +158,8 @@ def assegnazione_velocità(curv, args):
                 ritardo[i] = 0
 
 def ros_annidato(vel):
-    rospy.Subscriber("curv",UInt16,assegnazione_velocità, (vel.data))
+    print(vel.data)
+    rospy.Subscriber("curv",UInt16,assegnazione_velocità,vel)
 
 #legge i comandi di alto livello sul topic custom_chatter e
 #applica la funzione assegnazione_velocità se sono disponibili dati sul topic custom_chatter
