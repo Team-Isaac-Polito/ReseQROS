@@ -21,3 +21,9 @@ b = 1         # [m] distanza tra il punto centrale del modulo i-esimo e il giunt
 d = 0.2         # [m] lunghezza dell'interasse tra le due ruote equivalenti
 
 r = 0.05        # [m] raggio delle ruote equivalenti
+
+w_max = 1 # [Hz] massima velocità di rotazione di un motore di avanzamento
+
+Max_Lin_Vel= w_max*r # [m/s] massima velocità lineare di un modulo
+
+Max_Curv= #TODO # curvatura!

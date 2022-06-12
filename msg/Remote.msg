@@ -1,2 +1,2 @@
-uint16 vel_avanzamento
-uint16 curvatura
+uint16 lin_vel
+uint16 curv
