@@ -43,9 +43,11 @@ def vel_motors(lin_vel,ang_vel):
 """Struttura ROS"""
 
 # calcola il valore della velocità angolare del primo modulo a partire dalla curvatura desiderata
-def curv2ang(curv):
+def curv2ang(lin_vel,curv):
+    ang_vel=lin_vel/curv
 
-    #TODO
+    if curv > (9/10)*const.Max_Curv: # quando il raggio di curvatura supera 9/10 del valore massimo, si suppone che il comando sia di andare a dritto senza curvare
+        ang_vel=0
 
     return ang_vel
 
@@ -70,7 +72,7 @@ def assegnazione_velocità(remote_data):
     lin_vel,curv = scalatura_in(remote_data.lin_vel,remote_data.curv)
 
     # da curvatura a velocità angolare
-    ang_vel=curv2ang(curv)
+    ang_vel=curv2ang(lin_vel,curv)
 
     # definizione variabili strutturate per ROS
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
