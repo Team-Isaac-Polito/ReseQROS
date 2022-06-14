@@ -41,22 +41,24 @@ def vel_motors(lin_vel,ang_vel):
 
 
 """Struttura ROS"""
+
 # calcola il valore della velocità angolare del primo modulo a partire dalla curvatura desiderata
 def curv2ang(curv):
 
+    #TODO
+
     return ang_vel
 
-# scala i valori in ingresso dal topic "remote_topic" da 0/1023 a -Vmax/Vmax
+# scala i valori in ingresso dal topic "remote_topic" da 0/1023 a Valore_min/Valore_max
 # e filtra le vibrazioni sulla posizione di riposo
 def scalatura_in(lin_vel_in,curv_in):
     lin_vel_out = 512 if 462 < lin_vel_in < 562 else lin_vel_in # filtra le vibrazioni sulla posizione a riposo del joystick
     curv_out = 512 if 462 < curv_in < 562 else curv_in
 
     lin_vel_out = lin_vel_out-512 # da 0/1023 a -512/511
-    curv_out = curv_out-512
-
     lin_vel_out = (lin_vel_out/512)*const.Max_Lin_vel # da -512/511 a -Max_Lin_vel/Max_Lin_vel
-    curv_out = (curv_out/512)*const.Max_Curv_vel # da -512/511 a -Max_Curv_vel/Max_Curv_vel
+    
+    curv_out = const.Min_Curv+(curv_out/1023)*(const.Max_Curv-const.Min_Curv) # da 0/1023 a Min_Curv/Max_Curv
 
     return lin_vel_out, curv_out
 
