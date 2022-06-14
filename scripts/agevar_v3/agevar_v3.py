@@ -22,25 +22,7 @@ kinematic:
 Ts = 1/const.FREQ # Frequenza di iterazione dell'algoritmo, da scegliere e implementare con ROS
 
 
-"""Funzioni per il calcolo delle variabili d'interesse"""
-
-# calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
-def kinematic(lin_vel_in,ang_vel_in):
-
-    # TODO ...
-
-    return lin_vel_out, ang_vel_out
-
-
-# calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
-def vel_motors(lin_vel,ang_vel):
-
-    # TODO ...
-
-    return wdx, wsx, angle
-
-
-"""Struttura ROS"""
+"""Funzioni per la scalatura"""
 
 # calcola il valore della velocità angolare del primo modulo a partire dalla curvatura desiderata
 def curv2ang(lin_vel,curv):
@@ -63,6 +45,27 @@ def scalatura_in(lin_vel_in,curv_in):
     curv_out = const.Min_Curv+(curv_out/1023)*(const.Max_Curv-const.Min_Curv) # da 0/1023 a Min_Curv/Max_Curv
 
     return lin_vel_out, curv_out
+
+
+"""Funzioni per il calcolo delle variabili d'interesse"""
+
+# calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
+def kinematic(lin_vel_in,ang_vel_in):
+
+    # TODO ...
+
+    return lin_vel_out, ang_vel_out
+
+
+# calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
+def vel_motors(lin_vel,ang_vel):
+
+    # TODO ...
+
+    return wdx, wsx, angle
+
+
+"""Struttura ROS"""
 
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
