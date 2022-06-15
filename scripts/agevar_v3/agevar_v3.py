@@ -46,6 +46,37 @@ def scalatura_in(lin_vel_in,curv_in):
 
     return lin_vel_out, curv_out
 
+# scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
+# e impone una saturazione dei valori se superano i valori massimi consentiti
+def scalatura_out(wdx,wsx,angle):
+
+    #saturazione dei comandi:
+    if angle > math.radians(const.ANGLE_MAX):
+        angle = math.radians(const.ANGLE_MAX) 
+    elif angle < -math.radians(const.ANGLE_MAX):
+        angle = -math.radians(const.ANGLE_MAX)
+    
+    if wdx > const.w_max:
+        wdx = const.w_max
+    elif wdx < -const.wmax:
+        wdx = -const.w_max
+
+    if wsx > const.w_max:
+        wsx = const.w_max
+    elif wsx < -const.wmax:
+        wsx = -const.w_max
+
+    # scalatura
+    wdx=(wdx+const.w_max)/(2*const.w_max) # da -w_max/w_max a 0/1
+    wdx=int(wdx*1023) # da 0/1 a 0/1023
+
+    wsx=(wsx+const.w_max)/(2*const.w_max) # da -w_max/w_max a 0/1
+    wsx=int(wsx*1023) # da 0/1 a 0/1023
+
+    #TODO angle
+
+    return wdx, wsx, angle
+
 
 """Funzioni per il calcolo delle variabili d'interesse"""
 
@@ -71,7 +102,7 @@ def vel_motors(lin_vel,ang_vel):
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
 def assegnazione_velocità(remote_data):
 
-    # scalatura
+    # scalatura in ingresso
     lin_vel,curv = scalatura_in(remote_data.lin_vel,remote_data.curv)
 
     # da curvatura a velocità angolare
@@ -85,9 +116,12 @@ def assegnazione_velocità(remote_data):
     for num_module in range(const.N_MOD):
 
         wdx, wsx, angle = vel_motors(lin_vel,ang_vel) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
-        motor_msg.wdx = int(wdx) 
-        motor_msg.wsx = int(wsx) 
-        motor_msg.angle = int(angle)
+        
+        wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
+        
+        motor_msg.wdx = wdx
+        motor_msg.wsx = wsx
+        motor_msg.angle = angle
         motor_msg.address = const.ADDRESSES[num_module] 
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
