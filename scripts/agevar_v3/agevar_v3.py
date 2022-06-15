@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-from tkinter.messagebox import NO
+#from tkinter.messagebox import NO
 
-from pyrsistent import m
+#from pyrsistent import m
 import rospy
 from ReseQROS.msg import Remote, Motor
-import tf
+from std_msgs.msg import UInt16
+#import tf
 import constant as const
 import math
-import numpy as np
+#import numpy as np
 
 '''
 vel_motors:
@@ -22,14 +23,11 @@ kinematic:
 
 """Constanti globali"""
 
-Ts = 1/const.FREQ # Frequenza di iterazione dell'algoritmo, da scegliere e implementare con ROS
-
 # Marco so che non ti piacerà, è una soluzione temporane, poi farò un lavoro migliore con la modalità che avevo detto,
 # è solo che questa è quella più veloce per giovedì
 theta = [0]*const.N_MOD
 angular_vel = [0]*const.N_MOD
 linear_vel = [0]*const.N_MOD
-
 
 
 """Funzioni per la scalatura"""
@@ -38,7 +36,7 @@ linear_vel = [0]*const.N_MOD
 def curv2ang(lin_vel,curv):
     ang_vel=lin_vel/curv
 
-    if curv > (9/10)*const.Max_Curv: # quando il raggio di curvatura supera 9/10 del valore massimo, si suppone che il comando sia di andare a dritto senza curvare
+    if curv == const.Max_Curv: # quando il raggio di curvatura raggiunge il valore massimo il modulo procede a dritto senza curvare
         ang_vel=0
 
     return ang_vel
@@ -50,10 +48,13 @@ def scalatura_in(lin_vel_in,curv_in):
     curv_out = 512 if 462 < curv_in < 562 else curv_in
 
     lin_vel_out = lin_vel_out-512 # da 0/1023 a -512/511
-    lin_vel_out = (lin_vel_out/512)*const.Max_Lin_vel # da -512/511 a -Max_Lin_vel/Max_Lin_vel
-    
-    curv_out = const.Min_Curv+(curv_out/1023)*(const.Max_Curv-const.Min_Curv) # da 0/1023 a Min_Curv/Max_Curv
+    lin_vel_out = (lin_vel_out/512)*const.Max_Lin_Vel # da -512/511 a -Max_Lin_vel/Max_Lin_vel
 
+    curv_out = curv_out-512 # da 0/1023 a -512/512
+    if curv_out >= 0:
+        curv_out = const.Max_Curv-(const.Max_Curv-const.Min_Curv)*curv_out/512 # da 0/511 a Max_Curv/Min_Curv
+    else:
+        curv_out = -const.Max_Curv-(const.Max_Curv-const.Min_Curv)*curv_out/512 # da -512/-1 a -Min_Curv/Max_Curv
     return lin_vel_out, curv_out
 
 # scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
@@ -95,7 +96,7 @@ def kinematic(lin_vel_in,ang_vel_in,module):
 
     theta_dot = -(1/const.b)*(angular_vel[module]*(const.b+const.a*math.cos(theta[module]))+linear_vel[module]*math
     .sin(theta[module]))
-    theta[module]=theta[module]+theta_dot*Ts
+    theta[module]=theta[module]+theta_dot*const.Ts
 
     ang_vel_out = ang_vel_in + theta_dot
 
@@ -110,10 +111,10 @@ def kinematic(lin_vel_in,ang_vel_in,module):
 # calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
 def vel_motors(lin_vel,ang_vel):
 
-    # TODO ...
-
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
+
+    angle = 0 #TODO per provare il codice, da fare in realtà
 
     return wdx, wsx, angle
 
@@ -122,10 +123,14 @@ def vel_motors(lin_vel,ang_vel):
 
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
-def assegnazione_velocità(remote_data):
+def assegnazione_velocità(curv,vel):
+
+    #dati letti sul topic remote_control
+    vel = int(vel.data)
+    curv = int(curv.data)
 
     # scalatura in ingresso
-    lin_vel,curv = scalatura_in(remote_data.lin_vel,remote_data.curv)
+    lin_vel,curv = scalatura_in(vel,curv)
 
     # da curvatura a velocità angolare
     ang_vel=curv2ang(lin_vel,curv)
@@ -150,10 +155,13 @@ def assegnazione_velocità(remote_data):
         if num_module != range(const.N_MOD)[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 
+def listener_annidato(vel):
+    rospy.Subscriber("curv",UInt16,assegnazione_velocità,vel)
+
 # riceve i valori di velocità lineare e velocità angolare del primo modulo dal topic "remote_topic" e
 # applica la funzione assegnazione_velocità ai valori ricevuti
 def listener():
-    rospy.Subscriber("remote_topic",Remote,assegnazione_velocità)
+    rospy.Subscriber("vel",UInt16,listener_annidato)
 
 def main_function():
 
