@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+from tkinter.messagebox import NO
+
+from pyrsistent import m
 import rospy
 from ReseQROS.msg import Remote, Motor
 import tf
@@ -20,6 +23,13 @@ kinematic:
 """Constanti globali"""
 
 Ts = 1/const.FREQ # Frequenza di iterazione dell'algoritmo, da scegliere e implementare con ROS
+
+# Marco so che non ti piacerà, è una soluzione temporane, poi farò un lavoro migliore con la modalità che avevo detto,
+# è solo che questa è quella più veloce per giovedì
+theta = [0]*const.N_MOD
+angular_vel = [0]*const.N_MOD
+linear_vel = [0]*const.N_MOD
+
 
 
 """Funzioni per la scalatura"""
@@ -81,9 +91,18 @@ def scalatura_out(wdx,wsx,angle):
 """Funzioni per il calcolo delle variabili d'interesse"""
 
 # calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
-def kinematic(lin_vel_in,ang_vel_in):
+def kinematic(lin_vel_in,ang_vel_in,module):
 
-    # TODO ...
+    theta_dot = -(1/const.b)*(angular_vel[module]*(const.b+const.a*math.cos(theta[module]))+linear_vel[module]*math
+    .sin(theta[module]))
+    theta[module]=theta[module]+theta_dot*Ts
+
+    ang_vel_out = ang_vel_in + theta_dot
+
+    lin_vel_out_x = lin_vel_in + const.b*math.sin(theta[module])*ang_vel_out
+    lin_vel_out_y = -ang_vel_in*const.a - const.b*math.cos(theta[module])*ang_vel_out
+    
+    lin_vel_out = math.sqrt(lin_vel_out_x**2 + lin_vel_out_y**2)
 
     return lin_vel_out, ang_vel_out
 
@@ -92,6 +111,9 @@ def kinematic(lin_vel_in,ang_vel_in):
 def vel_motors(lin_vel,ang_vel):
 
     # TODO ...
+
+    wdx = (lin_vel+ang_vel*const.d/2)/const.r
+    wsx = (lin_vel-ang_vel*const.d/2)/const.r
 
     return wdx, wsx, angle
 
@@ -126,7 +148,7 @@ def assegnazione_velocità(remote_data):
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
         if num_module != range(const.N_MOD)[-1]: # per tutti i moduli tranne l'ultimo ...
-            lin_vel,ang_vel = kinematic(lin_vel,ang_vel) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
+            lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 
 # riceve i valori di velocità lineare e velocità angolare del primo modulo dal topic "remote_topic" e
 # applica la funzione assegnazione_velocità ai valori ricevuti
