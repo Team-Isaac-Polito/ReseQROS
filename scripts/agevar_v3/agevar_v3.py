@@ -68,12 +68,12 @@ def scalatura_out(wdx,wsx,angle):
     
     if wdx > const.w_max:
         wdx = const.w_max
-    elif wdx < -const.wmax:
+    elif wdx < -const.w_max:
         wdx = -const.w_max
 
     if wsx > const.w_max:
         wsx = const.w_max
-    elif wsx < -const.wmax:
+    elif wsx < -const.w_max:
         wsx = -const.w_max
 
     # scalatura
