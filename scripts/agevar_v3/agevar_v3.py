@@ -77,12 +77,11 @@ def kinematic(lin_vel_in,ang_vel_in,module):
 
 
 # calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
-def vel_motors(lin_vel,ang_vel):
-
-    # TODO ...
+def vel_motors(lin_vel,ang_vel,module):
 
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
+    angle = theta[module]
 
     return wdx, wsx, angle
 
@@ -106,7 +105,7 @@ def assegnazione_velocità(remote_data):
     # per ogni modulo ...                        
     for num_module in range(const.N_MOD):
 
-        wdx, wsx, angle = vel_motors(lin_vel,ang_vel) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
+        wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
         motor_msg.wdx = int(wdx) 
         motor_msg.wsx = int(wsx) 
         motor_msg.angle = int(angle)
