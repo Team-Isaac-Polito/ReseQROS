@@ -2,7 +2,7 @@ from math import cos, sin, radians, pi
 
 # CONSTANTS
 
-N_MOD = 1           # Number of modules of the robot
+N_MOD = 2           # Number of modules of the robot
 
 #serve ancora? TODO
 N_VAR = 7           # Number of kinetic variables 
