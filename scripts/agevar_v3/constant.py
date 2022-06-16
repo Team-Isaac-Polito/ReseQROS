@@ -2,14 +2,14 @@ from math import cos, sin, radians, pi
 
 # CONSTANTS
 
-N_MOD = 3           # Number of modules of the robot
+N_MOD = 3          # Number of modules of the robot
 
 #serve ancora? TODO
 N_VAR = 7           # Number of kinetic variables 
 
 ANGLE_MAX = 35      # [°] Is the maximum angle between two moduless
 
-FREQ = 100          # [Hz] Is the refresh rate of the program. Is you to determinate the time passed from the previous operation
+FREQ = 50          # [Hz] Is the refresh rate of the program. Is you to determinate the time passed from the previous operation
 Ts = 1/FREQ        # [s] Periodo di iterazione dell'algoritmo, da scegliere e implementare con ROS
 
 ADDRESSES = [ 21, 48, 69 ] # 0x15, 0x30, 0x45

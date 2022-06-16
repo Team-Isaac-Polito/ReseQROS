@@ -26,6 +26,8 @@ kinematic:
 # Marco so che non ti piacerà, è una soluzione temporane, poi farò un lavoro migliore con la modalità che avevo detto,
 # è solo che questa è quella più veloce per giovedì
 theta = [0]*const.N_MOD
+vel=512
+curv=512
 
 
 """Funzioni per la scalatura"""
@@ -45,10 +47,10 @@ def scalatura_in(lin_vel_in,curv_in):
     lin_vel_out = 512 if 462 < lin_vel_in < 562 else lin_vel_in # filtra le vibrazioni sulla posizione a riposo del joystick
     curv_out = 512 if 462 < curv_in < 562 else curv_in
 
-    lin_vel_out = lin_vel_out-512 # da 0/1023 a -512/511
+    lin_vel_out = -(lin_vel_out-512) # da 0/1023 a 512/-511
     lin_vel_out = (lin_vel_out/512)*const.Max_Lin_Vel # da -512/511 a -Max_Lin_vel/Max_Lin_vel
 
-    curv_out = curv_out-512 # da 0/1023 a -512/512
+    curv_out = -(curv_out-512) # da 0/1023 a 512/-512
     if curv_out >= 0:
         curv_out = const.Max_Curv-(const.Max_Curv-const.Min_Curv)*curv_out/512 # da 0/511 a Max_Curv/Min_Curv
     else:
@@ -145,11 +147,7 @@ def vel_motors(lin_vel,ang_vel,module):
 
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
-def assegnazione_velocità(curv,vel):
-
-    #dati letti sul topic remote_control
-    vel = int(vel.data)
-    curv = int(curv.data)
+def assegnazione_velocità(vel,curv):
 
     # scalatura in ingresso
     lin_vel,curv = scalatura_in(vel,curv)
@@ -167,6 +165,8 @@ def assegnazione_velocità(curv,vel):
         wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
         
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
+
+        print("angle:"+str(angle))
         
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
@@ -177,27 +177,29 @@ def assegnazione_velocità(curv,vel):
         if num_module != range(const.N_MOD)[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 
-def listener_annidato(vel):
-    rospy.Subscriber("curv",UInt16,assegnazione_velocità,vel)
+def vel_list(dataa):
+    global vel
+    vel=int(dataa.data)
+
+def curv_list(dataa):
+    global curv
+    curv=int(dataa.data)
+    assegnazione_velocità(vel,curv)
 
 # riceve i valori di velocità lineare e velocità angolare del primo modulo dal topic "remote_topic" e
 # applica la funzione assegnazione_velocità ai valori ricevuti
 def listener():
-    rospy.Subscriber("vel",UInt16,listener_annidato)
+    rospy.Subscriber("vel",UInt16,vel_list)
+    rospy.Subscriber("curv",UInt16,curv_list)
+
+
+    rospy.spin()
 
 def main_function():
-
     rospy.init_node('agevar') #inizializza il nodo "agevar"
     rospy.loginfo("Hello! agevar node started!")
 
-    #listener()
-    #rospy.spin()
-
-    rate = rospy.Rate(const.FREQ) #frecuency in hertz
-    while not rospy.is_shutdown():
-        rospy.loginfo("agevar node working")
-        listener()
-        rate.sleep()
+    listener()
 
 if __name__ == '__main__':
 	try:
