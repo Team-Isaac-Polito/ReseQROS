@@ -26,8 +26,6 @@ kinematic:
 # Marco so che non ti piacerà, è una soluzione temporane, poi farò un lavoro migliore con la modalità che avevo detto,
 # è solo che questa è quella più veloce per giovedì
 theta = [0]*const.N_MOD
-angular_vel = [0]*const.N_MOD
-linear_vel = [0]*const.N_MOD
 
 
 """Funzioni per la scalatura"""
@@ -61,11 +59,13 @@ def scalatura_in(lin_vel_in,curv_in):
 # e impone una saturazione dei valori se superano i valori massimi consentiti
 def scalatura_out(wdx,wsx,angle):
 
+    angle=math.degrees(angle)
+
     #saturazione dei comandi:
-    if angle > math.radians(const.ANGLE_MAX):
-        angle = math.radians(const.ANGLE_MAX) 
-    elif angle < -math.radians(const.ANGLE_MAX):
-        angle = -math.radians(const.ANGLE_MAX)
+    if angle > const.ANGLE_MAX:
+        angle = const.ANGLE_MAX
+    elif angle < -const.ANGLE_MAX:
+        angle = -const.ANGLE_MAX
     
     if wdx > const.w_max:
         wdx = const.w_max
@@ -78,13 +78,11 @@ def scalatura_out(wdx,wsx,angle):
         wsx = -const.w_max
 
     # scalatura
-    wdx=(wdx+const.w_max)/(2*const.w_max) # da -w_max/w_max a 0/1
-    wdx=int(wdx*1023) # da 0/1 a 0/1023
+    wdx=wdx/const.w_max # da -w_max/w_max a -1/1
+    wdx=int(wdx*1023) # da -1/1 a -1023/1023
 
-    wsx=(wsx+const.w_max)/(2*const.w_max) # da -w_max/w_max a 0/1
-    wsx=int(wsx*1023) # da 0/1 a 0/1023
-
-    #TODO angle
+    wsx=wsx/const.w_max # da -w_max/w_max a 0/1
+    wsx=int(wsx*1023) # da -1/1 a -1023/1023
 
     return wdx, wsx, angle
 
@@ -93,9 +91,10 @@ def scalatura_out(wdx,wsx,angle):
 
 # calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 def kinematic(lin_vel_in,ang_vel_in,module):
+    global theta
 
-    theta_dot = -(1/const.b)*(angular_vel[module]*(const.b+const.a*math.cos(theta[module]))+linear_vel[module]*math
-    .sin(theta[module]))
+    module=module+1
+    theta_dot = -(1/const.b)*(ang_vel_in*(const.b+const.a*math.cos(theta[module]))+lin_vel_in*math.sin(theta[module]))
     theta[module]=theta[module]+theta_dot*const.Ts
 
     ang_vel_out = ang_vel_in + theta_dot
@@ -108,20 +107,31 @@ def kinematic(lin_vel_in,ang_vel_in,module):
     # pubblica sul topic "/tf" la posizione e l'orientamento del sistema di riferimento del secondo modulo denominato "RFM_2"
     # rispetto al sistema di riferimento fisso chiamato "RFM_1"
     # Si può visualizzare graficamente tramite rviz
-    posa_M1=tf.TransformBroadcaster()
-    x2=-const.a-const.b*math.cos(theta[module])
-    y2=-const.b*math.sin(theta[module])
-    posa_M1.sendTransform((x2,y2,0),
-    tf.transformations.quaternion_from_euler(0, 0, -theta[module]),
-    rospy.Time.now(),
-    "RFM_2",
-    "RFM_1")
+    if module == 1:
+        posa_M12=tf.TransformBroadcaster()
+        x2=-const.a-const.b*math.cos(theta[module])
+        y2=-const.b*math.sin(theta[module])
+        posa_M12.sendTransform((x2,y2,0),
+        tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+        rospy.Time.now(),
+        "RFM_2",
+        "RFM_1")
+    if module == 2:
+        posa_M23=tf.TransformBroadcaster()
+        x3=-const.a-const.b*math.cos(theta[module])
+        y3=-const.b*math.sin(theta[module])
+        posa_M23.sendTransform((x3,y3,0),
+        tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+        rospy.Time.now(),
+        "RFM_3",
+        "RFM_2")
 
     return lin_vel_out, ang_vel_out
 
 
 # calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
 def vel_motors(lin_vel,ang_vel,module):
+    global theta
 
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
