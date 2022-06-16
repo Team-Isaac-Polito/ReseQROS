@@ -121,12 +121,19 @@ def kinematic(lin_vel_in,ang_vel_in,module):
 
 
 # calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
-def vel_motors(lin_vel,ang_vel):
+def vel_motors(lin_vel,ang_vel,module):
 
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
-
-    angle = 0 #TODO per provare il codice, da fare in realtà
+    
+    if (module == 0):
+        # Il modulo in questione è il moduli di testa quindi il suo angolo è nullo
+        angle = 0
+    else:
+        # L'angolo è calcolato rispetto al sistema di riferimento del primo modulo, quindi il suo valore è dato dalla
+        # somma degli angoli dei moduli precedenti
+        for i in range(module):
+            angle += theta[i] 
 
     return wdx, wsx, angle
 
@@ -154,7 +161,7 @@ def assegnazione_velocità(curv,vel):
     # per ogni modulo ...                        
     for num_module in range(const.N_MOD):
 
-        wdx, wsx, angle = vel_motors(lin_vel,ang_vel) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
+        wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
         
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
         
