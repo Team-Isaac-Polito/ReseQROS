@@ -114,14 +114,7 @@ def vel_motors(lin_vel,ang_vel,module):
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
     
-    if (module == 0):
-        # Il modulo in questione è il moduli di testa quindi il suo angolo è nullo
-        angle = 0
-    else:
-        # L'angolo è calcolato rispetto al sistema di riferimento del primo modulo, quindi il suo valore è dato dalla
-        # somma degli angoli dei moduli precedenti
-        for i in range(module):
-            angle += theta[i] 
+    angle = theta[module] 
 
     return wdx, wsx, angle
 
