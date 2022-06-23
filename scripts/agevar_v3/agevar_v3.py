@@ -12,12 +12,6 @@ import math
 #import numpy as np
 
 '''
-vel_motors:
-# TODO
-
-kinematic:
-# TODO
-
 @Riccardo Giacchino [301168] e @Marco Barbon [287462]
 '''
 
