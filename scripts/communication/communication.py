@@ -6,7 +6,7 @@ import os
 import time
 import rospy
 from ReseQROS.msg import Motor
-
+from std_msgs.msg import UInt16
 vel=0
 curv=0
 tempo = 0
@@ -29,7 +29,6 @@ def writeNumbers(addr,vsx,vdx,angle):
 
 
 def invio_dati():
-	rospy.loginfo("DataToSend:\nADDR: " + str(data.address) + "\nVSX: " + str(data.vsx) + "\nVDX: " + str(data.vdx) + "\nANGLE: " + str(data.angle))
 	global vel
 	global curv
 	rospy.loginfo("executing writenumbers - vel " + str(vel) + " - curv - " + str(curv))
@@ -41,11 +40,20 @@ def invio_dati():
 	velo = velo - 512		#-512 +512
 	curvo = curvo - 512		#-512 +512
 
-	vsx,vdx = mappaDrive(velo,curvo)
+	if abs(velo) < 150:
+		vsx,vdx = mappaPivot(velo,curvo)
+	else:
+		vsx,vdx = mappaDrive(velo,curvo)
 
 	writeNumbers(21,int(vsx),int(vdx),int(0))
 	writeNumbers(22,int(vsx),int(vdx),int(0))
 	writeNumbers(23,int(vsx),int(vdx),int(0))
+
+
+def mappaPivot(velo,curvo):
+	vsx = curvo/2
+	vdx = -vsx
+	return vsx, vdx
 
 def mappaDrive(velo,curvo):
 	vsx = velo + curvo/2
