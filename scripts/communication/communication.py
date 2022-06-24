@@ -12,19 +12,16 @@ curv=0
 tempo = 0
 
 def writeNumbers(addr,vsx,vdx,angle):
-	a = vsx & 0xFF
-	b = vsx>>8 & 0xFF
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_LEFT, a, b],is_extended_id=False)
+	out = vsx.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
 	canbus.send(msg)
 
-	a = vdx & 0xFF
-	b = vdx>>8 & 0xFF
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_RIGHT, a, b],is_extended_id=False)
+	out = vdx.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_RIGHT, out[0], out[1]],is_extended_id=False)
 	canbus.send(msg)
 
-	a = angle & 0xFF
-	b = angle>>8 & 0xFF
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_YAW, a, b],is_extended_id=False)
+	out = angle.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
 	canbus.send(msg)
 
 
