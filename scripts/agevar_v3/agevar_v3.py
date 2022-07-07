@@ -99,6 +99,7 @@ def kinematic(lin_vel_in,ang_vel_in,module):
     lin_vel_out_y = -ang_vel_in*const.a - const.b*math.cos(theta[module])*ang_vel_out
     
     lin_vel_out = math.sqrt(lin_vel_out_x**2 + lin_vel_out_y**2)
+    
 
     # pubblica sul topic "/tf" la posizione e l'orientamento del sistema di riferimento del secondo modulo denominato "RFM_2"
     # rispetto al sistema di riferimento fisso chiamato "RFM_1"
@@ -160,7 +161,9 @@ def assegnazione_velocità(vel,curv):
         
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
 
-        print("angle:"+str(angle))
+        #print("angle:"+str(angle)+" ----- Num_mod:"+str(num_module))
+        #print("dx:"+str(wdx)+"/sx:"+str(wsx)+" ----- Num_mod:"+str(num_module))
+        print(lin_vel,str(num_module))
         
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
