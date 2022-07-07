@@ -137,6 +137,14 @@ def vel_motors(lin_vel,ang_vel,module):
     return wdx, wsx, angle
 
 
+def direzione(lin_vel,curv):
+    if (lin_vel<0):
+        return 0, -lin_vel, -curv
+    else:
+        return 1, lin_vel, curv
+    
+
+
 """Struttura ROS"""
 
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
@@ -145,6 +153,8 @@ def assegnazione_velocità(vel,curv):
 
     # scalatura in ingresso
     lin_vel,curv = scalatura_in(vel,curv)
+
+    segno,lin_vel,curv = direzione(lin_vel,curv)
 
     # da curvatura a velocità angolare
     ang_vel=curv2ang(lin_vel,curv)
