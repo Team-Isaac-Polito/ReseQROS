@@ -138,7 +138,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
         if module == 1:
             posa_M23=tf.TransformBroadcaster()
             x2=-const.a-const.b*math.cos(-theta[module])
-            y2=const.b*math.sin(-theta[module])
+            y2=-const.b*math.sin(-theta[module])
             posa_M23.sendTransform((x2,y2,0),
             tf.transformations.quaternion_from_euler(0, 0, -theta[module]),
             rospy.Time.now(),
@@ -147,7 +147,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
         if module == 0:
             posa_M12=tf.TransformBroadcaster()
             x1=-const.a-const.b*math.cos(-theta[module])
-            y1=const.b*math.sin(-theta[module])
+            y1=-const.b*math.sin(-theta[module])
             posa_M12.sendTransform((x1,y1,0),
             tf.transformations.quaternion_from_euler(0, 0, -theta[module]),
             rospy.Time.now(),
