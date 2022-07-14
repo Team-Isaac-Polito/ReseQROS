@@ -82,14 +82,25 @@ def scalatura_out(wdx,wsx,angle):
 
     return wdx, wsx, angle
 
+# funzione direzione
+def direzione(lin_vel,curv):
+    if (lin_vel<0):
+        return 0, -lin_vel, -curv # indietro
+    else:
+        return 1, lin_vel, curv # in avanti
+
 
 """Funzioni per il calcolo delle variabili d'interesse"""
 
 # calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
-def kinematic(lin_vel_in,ang_vel_in,module):
+def kinematic(lin_vel_in,ang_vel_in,module,segno):
     global theta
 
-    module=module+1
+    if segno==1:
+        module=module+1
+    else:
+        module=module-1
+    
     theta_dot = -(1/const.b)*(ang_vel_in*(const.b+const.a*math.cos(theta[module]))+lin_vel_in*math.sin(theta[module]))
     theta[module]=theta[module]+theta_dot*const.Ts
 
@@ -103,24 +114,45 @@ def kinematic(lin_vel_in,ang_vel_in,module):
     # pubblica sul topic "/tf" la posizione e l'orientamento del sistema di riferimento del secondo modulo denominato "RFM_2"
     # rispetto al sistema di riferimento fisso chiamato "RFM_1"
     # Si può visualizzare graficamente tramite rviz
-    if module == 1:
-        posa_M12=tf.TransformBroadcaster()
-        x2=-const.a-const.b*math.cos(theta[module])
-        y2=-const.b*math.sin(theta[module])
-        posa_M12.sendTransform((x2,y2,0),
-        tf.transformations.quaternion_from_euler(0, 0, theta[module]),
-        rospy.Time.now(),
-        "RFM_2",
-        "RFM_1")
-    if module == 2:
-        posa_M23=tf.TransformBroadcaster()
-        x3=-const.a-const.b*math.cos(theta[module])
-        y3=-const.b*math.sin(theta[module])
-        posa_M23.sendTransform((x3,y3,0),
-        tf.transformations.quaternion_from_euler(0, 0, theta[module]),
-        rospy.Time.now(),
-        "RFM_3",
-        "RFM_2")
+    if segno==1:
+        if module == 1:
+            posa_M12=tf.TransformBroadcaster()
+            x2=-const.a-const.b*math.cos(theta[module])
+            y2=-const.b*math.sin(theta[module])
+            posa_M12.sendTransform((x2,y2,0),
+            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            rospy.Time.now(),
+            "RFM_2",
+            "RFM_1")
+        if module == 2:
+            posa_M23=tf.TransformBroadcaster()
+            x3=-const.a-const.b*math.cos(theta[module])
+            y3=-const.b*math.sin(theta[module])
+            posa_M23.sendTransform((x3,y3,0),
+            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            rospy.Time.now(),
+            "RFM_3",
+            "RFM_2")
+    if segno==0:
+        if module == 2:
+            posa_M32=tf.TransformBroadcaster()
+            x2=-const.a-const.b*math.cos(theta[module])
+            y2=-const.b*math.sin(theta[module])
+            posa_M32.sendTransform((x2,y2,0),
+            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            rospy.Time.now(),
+            "RFM_2",
+            "RFM_3")
+        if module == 1:
+            posa_M21=tf.TransformBroadcaster()
+            x1=-const.a-const.b*math.cos(theta[module])
+            y1=-const.b*math.sin(theta[module])
+            posa_M21.sendTransform((x1,y1,0),
+            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            rospy.Time.now(),
+            "RFM_1",
+            "RFM_2")
+
 
     return lin_vel_out, ang_vel_out
 
@@ -134,7 +166,7 @@ def vel_motors(lin_vel,ang_vel,module):
     
     angle = theta[module] 
 
-    return wdx, wsx, angle
+    return wdx, wsx, angle    
 
 
 """Struttura ROS"""
@@ -146,6 +178,9 @@ def assegnazione_velocità(vel,curv):
     # scalatura in ingresso
     lin_vel,curv = scalatura_in(vel,curv)
 
+    # funzione direzione
+    segno,lin_vel,curv = direzione(lin_vel,curv)
+
     # da curvatura a velocità angolare
     ang_vel=curv2ang(lin_vel,curv)
 
@@ -153,8 +188,14 @@ def assegnazione_velocità(vel,curv):
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    # per ogni modulo ...                        
-    for num_module in range(const.N_MOD):
+    # per ogni modulo ...    
+    if segno==1:  
+        vettore_moduli= list(range(const.N_MOD)) # in avanti
+    else:
+        vettore_moduli= list(range(const.N_MOD)) # indietro
+        vettore_moduli.reverse()
+
+    for num_module in vettore_moduli:
 
         wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
         
@@ -168,8 +209,8 @@ def assegnazione_velocità(vel,curv):
         motor_msg.address = const.ADDRESSES[num_module] 
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-        if num_module != range(const.N_MOD)[-1]: # per tutti i moduli tranne l'ultimo ...
-            lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
+        if num_module != vettori_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
+            lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module,segno) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 
 def vel_list(dataa):
     global vel
