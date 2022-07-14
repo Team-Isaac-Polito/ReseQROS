@@ -201,6 +201,8 @@ def assegnazione_velocità(vel,curv):
         wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo
 
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
+        if segno == 0:
+              wsx, wdx = -wsx,-wdx
 
         #print("angle:"+str(angle)+" ----- Num_mod:"+str(num_module))
         #print("dx:"+str(wdx)+"/sx:"+str(wsx)+" ----- Num_mod:"+str(num_module))
