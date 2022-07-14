@@ -62,7 +62,7 @@ def scalatura_out(wdx,wsx,angle):
         angle = const.ANGLE_MAX
     elif angle < -const.ANGLE_MAX:
         angle = -const.ANGLE_MAX
-    
+
     if wdx > const.w_max:
         wdx = const.w_max
     elif wdx < -const.w_max:
@@ -100,7 +100,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
         module=module+1
     else:
         module=module-1
-    
+
     theta_dot = -(1/const.b)*(ang_vel_in*(const.b+const.a*math.cos(theta[module]))+lin_vel_in*math.sin(theta[module]))
     theta[module]=theta[module]+theta_dot*const.Ts
 
@@ -108,9 +108,9 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
 
     lin_vel_out_x = lin_vel_in + const.b*math.sin(theta[module])*ang_vel_out
     lin_vel_out_y = -ang_vel_in*const.a - const.b*math.cos(theta[module])*ang_vel_out
-    
+
     lin_vel_out = math.sqrt(lin_vel_out_x**2 + lin_vel_out_y**2)
-    
+
 
     # pubblica sul topic "/tf" la posizione e l'orientamento del sistema di riferimento del secondo modulo denominato "RFM_2"
     # rispetto al sistema di riferimento fisso chiamato "RFM_1"
@@ -136,20 +136,20 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
             "RFM_2")
     if segno==0:
         if module == 1:
-            posa_M32=tf.TransformBroadcaster()
-            x2=-const.a-const.b*math.cos(theta[module])
-            y2=-const.b*math.sin(theta[module])
-            posa_M32.sendTransform((x2,y2,0),
-            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            posa_M23=tf.TransformBroadcaster()
+            x2=-const.a-const.b*math.cos(-theta[module])
+            y2=const.b*math.sin(-theta[module])
+            posa_M23.sendTransform((x2,y2,0),
+            tf.transformations.quaternion_from_euler(0, 0, -theta[module]),
             rospy.Time.now(),
             "RFM_2",
             "RFM_3")
         if module == 0:
-            posa_M21=tf.TransformBroadcaster()
-            x1=-const.a-const.b*math.cos(theta[module])
-            y1=-const.b*math.sin(theta[module])
-            posa_M21.sendTransform((x1,y1,0),
-            tf.transformations.quaternion_from_euler(0, 0, theta[module]),
+            posa_M12=tf.TransformBroadcaster()
+            x1=-const.a-const.b*math.cos(-theta[module])
+            y1=const.b*math.sin(-theta[module])
+            posa_M12.sendTransform((x1,y1,0),
+            tf.transformations.quaternion_from_euler(0, 0, -theta[module]),
             rospy.Time.now(),
             "RFM_1",
             "RFM_2")
@@ -158,16 +158,16 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
     return lin_vel_out, ang_vel_out
 
 
-# calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
+# calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo
 def vel_motors(lin_vel,ang_vel,module):
     global theta
 
     wdx = (lin_vel+ang_vel*const.d/2)/const.r
     wsx = (lin_vel-ang_vel*const.d/2)/const.r
-    
-    angle = theta[module] 
 
-    return wdx, wsx, angle    
+    angle = theta[module]
+
+    return wdx, wsx, angle
 
 
 """Struttura ROS"""
@@ -189,8 +189,8 @@ def assegnazione_velocità(vel,curv):
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    # per ogni modulo ...    
-    if segno==1:  
+    # per ogni modulo ...
+    if segno==1:
         vettore_moduli= list(range(const.N_MOD)) # in avanti
     else:
         vettore_moduli= list(range(const.N_MOD)) # indietro
@@ -198,18 +198,18 @@ def assegnazione_velocità(vel,curv):
 
     for num_module in vettore_moduli:
 
-        wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo 
-        
+        wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo
+
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
 
         #print("angle:"+str(angle)+" ----- Num_mod:"+str(num_module))
         #print("dx:"+str(wdx)+"/sx:"+str(wsx)+" ----- Num_mod:"+str(num_module))
         print(lin_vel,str(num_module))
-        
+
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
         motor_msg.angle = angle
-        motor_msg.address = const.ADDRESSES[num_module] 
+        motor_msg.address = const.ADDRESSES[num_module]
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
         if num_module != vettore_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
