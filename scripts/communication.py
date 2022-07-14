@@ -40,7 +40,7 @@ def writeNumbers(addr,vsx,vdx,angle):
 
 
 def motor_list(dataa):
-	writeNumbers(int(dataa.addr),int(dataa.wsx),int(dataa.wdx),int(dataa.angle))
+	writeNumbers(int(dataa.address),int(dataa.wsx),int(dataa.wdx),int(dataa.angle))
 	#rospy.loginfo("received curv")
 
 
