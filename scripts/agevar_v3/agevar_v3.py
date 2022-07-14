@@ -209,7 +209,7 @@ def assegnazione_velocità(vel,curv):
         motor_msg.address = const.ADDRESSES[num_module] 
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-        if num_module != vettori_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
+        if num_module != vettore_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module,segno) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
 
 def vel_list(dataa):
