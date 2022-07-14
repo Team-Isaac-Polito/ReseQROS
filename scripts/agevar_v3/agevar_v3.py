@@ -135,7 +135,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
             "RFM_3",
             "RFM_2")
     if segno==0:
-        if module == 2:
+        if module == 1:
             posa_M32=tf.TransformBroadcaster()
             x2=-const.a-const.b*math.cos(theta[module])
             y2=-const.b*math.sin(theta[module])
@@ -144,7 +144,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
             rospy.Time.now(),
             "RFM_2",
             "RFM_3")
-        if module == 1:
+        if module == 0:
             posa_M21=tf.TransformBroadcaster()
             x1=-const.a-const.b*math.cos(theta[module])
             y1=-const.b*math.sin(theta[module])
