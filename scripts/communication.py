@@ -1,40 +1,63 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
+import definitions
+import can
+import os
+import time
 import rospy
 from ReseQROS.msg import Motor
-import smbus as smbus
-import struct
+from std_msgs.msg import UInt16
+vel=0
+curv=0
+tempo = 0
 
-def writeNumbers(addr,values):
-    global I2Cbus
-    byteList = []
-    for value in values:
-        byteList += list(struct.pack('f', value))
-    byteList.append(0)  # fails to send last byte over I2C, hence this needs to be added 
-    I2Cbus.write_i2c_block_data(addr, byteList[0], byteList[1:12])
+def writeNumbers(addr,vsx,vdx,angle):
+	out = vsx.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
+	canbus.send(msg)
+
+	out = vdx.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_RIGHT, out[0], out[1]],is_extended_id=False)
+	canbus.send(msg)
+
+	out = angle.to_bytes(2, byteorder='little', signed=True)
+	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
+	canbus.send(msg)
 
 
 
-def invio_dati(data):
-	rospy.loginfo("DataToSend:\nADDR: " + str(data.address) + "\nVSX: " + str(data.vsx) + "\nVDX: " + str(data.vdx) + "\nANGLE: " + str(data.angle))
-	#ToDo convert data to set of bytes
-	values = [float(data.vsx),float(data.vdx),float(data.angle)]
-	writeNumbers(data.address,values)
+
+
+#def vel_list(dataa):
+#	global vel
+#	global tempo
+#	vel = int(dataa.data)
+#	rospy.loginfo("received vel")
+#	rospy.loginfo("--vel " + str(vel) + "- curv " + str(curv))
+#	if time.time() - tempo > 0.1:
+#		tempo = time.time()
+#		invio_dati()
+
+
+def motor_list(dataa):
+	writeNumbers(int(dataa.address),int(dataa.wsx),int(dataa.wdx),int(dataa.angle))
+	#rospy.loginfo("received curv")
 
 
 if __name__ == '__main__':
-	global I2Cbus
 	try:
-		I2Cbus = smbus.SMBus(1)
-
 		rospy.init_node('communication')
-
 		rospy.loginfo("Hello! communication node started!")
 
-		rospy.Subscriber("motor_topic",Motor,invio_dati)
+		canbus = can.interface.Bus(channel='can0', bustype='socketcan')
+
+		rospy.Subscriber("motor_topic",Motor,motor_list)
+		#rospy.Subscriber("vel",UInt16,vel_list)
+		#rospy.Subscriber("curv",UInt16,curv_list)
 
 		rospy.spin()
-		
+
 
 	except rospy.ROSInterruptException:
 		pass
+
