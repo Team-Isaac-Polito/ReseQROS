@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
-#from tkinter.messagebox import NO
-
-#from pyrsistent import m
 import rospy
 from ReseQROS.msg import Remote, Motor
 from std_msgs.msg import UInt16
 import tf
 import constant as const
 import math
-#import numpy as np
 
 '''
 @Riccardo Giacchino [301168] e @Marco Barbon [287462]
@@ -201,24 +197,16 @@ def curv_list(dataa):
     curv=int(dataa.data)
     assegnazione_velocità(vel,curv)
 
-# riceve i valori di velocità lineare e velocità angolare del primo modulo dal topic "remote_topic" e
-# applica la funzione assegnazione_velocità ai valori ricevuti
-def listener():
-    rospy.Subscriber("vel",UInt16,vel_list)
-    rospy.Subscriber("curv",UInt16,curv_list)
-
-
-    rospy.spin()
-
-def main_function():
-    rospy.init_node('agevar') #inizializza il nodo "agevar"
-    rospy.loginfo("Hello! agevar node started!")
-
-    listener()
-
 if __name__ == '__main__':
 	try:
-		main_function()
+        rospy.init_node('agevar') #inizializza il nodo "agevar"
+        rospy.loginfo("Hello! agevar node started!")
+
+        rospy.Subscriber("vel",UInt16,vel_list)
+        rospy.Subscriber("curv",UInt16,curv_list)
+
+        rospy.spin()
+        
 	except rospy.ROSInterruptException:
 		pass
 
