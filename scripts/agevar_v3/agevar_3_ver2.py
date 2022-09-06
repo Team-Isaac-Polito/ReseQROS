@@ -31,20 +31,24 @@ def curv2ang(lin_vel,curv):
 
     return ang_vel
 
-# scala i valori in ingresso dal topic "remote_topic" da 0/1023 a Valore_min/Valore_max
-# e filtra le vibrazioni sulla posizione di riposo
+# Filtra le vibrazioni sulla posizione di riposo.
+# E scala i valori in ingresso dal topic "remote_topic":
+# vel: 0 / 462-562 / 1023 => -Max_Lin_vel (indietro) / 0 (fermo) / Max_Lin_vel (avanti)
+# curv: 0 / 461 / 462-562 / 563 / 1023 => -Min_Curv (sx) / -Max_curv (sx) / 'inf' (Dritto) / Max_curv (dx) / Min_Curv (dx)
 def scalatura_in(lin_vel_in,curv_in):
-    lin_vel_out = 512 if 462 < lin_vel_in < 562 else lin_vel_in # filtra le vibrazioni sulla posizione a riposo del joystick
-    curv_out = 512 if 462 < curv_in < 562 else curv_in
+    
+    lin_vel_out = 512 if 462 <= lin_vel_in <= 562 else lin_vel_in # filtro
+    lin_vel_out = lin_vel_out-512 # da 0/512/1023 a -512/0/511
+    lin_vel_out = (lin_vel_out/512)*const.Max_Lin_Vel # da -512/0/511 a -Max_Lin_vel/0/Max_Lin_vel
 
-    lin_vel_out = -(lin_vel_out-512) # da 0/1023 a 512/-511
-    lin_vel_out = (lin_vel_out/512)*const.Max_Lin_Vel # da -512/511 a -Max_Lin_vel/Max_Lin_vel
-
-    curv_out = -(curv_out-512) # da 0/1023 a 512/-512
-    if curv_out >= 0:
-        curv_out = const.Max_Curv-(const.Max_Curv-const.Min_Curv)*curv_out/512 # da 0/511 a Max_Curv/Min_Curv
-    else:
-        curv_out = -const.Max_Curv-(const.Max_Curv-const.Min_Curv)*curv_out/512 # da -512/-1 a -Min_Curv/Max_Curv
+    curv_out = 512 if 462 <= curv_in <= 562 else curv_in # filtro
+    curv_out = curv_out-512 # da 0/512/1023 a -512/0/511
+    if curv_out == 0:
+        curv_out='inf' # da -50/50 a 'inf'
+    elif curv_out > 0:
+        curv_out = const.Max_Curv-(const.Max_Curv-const.Min_Curv)*(curv_out-51)/460 # da 51/511 a Max_Curv/Min_Curv
+    elif curv_out < 0:
+        curv_out = -const.Max_Curv-(const.Max_Curv-const.Min_Curv)*(curv_out+50)/462 # da -512/-50 a -Min_Curv/-Max_Curv
     return lin_vel_out, curv_out
 
 # scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
@@ -198,7 +202,7 @@ def curv_list(dataa):
     assegnazione_velocità(vel,curv)
 
 if __name__ == '__main__':
-	try:
+    try:
         rospy.init_node('agevar') #inizializza il nodo "agevar"
         rospy.loginfo("Hello! agevar node started!")
 
@@ -207,8 +211,8 @@ if __name__ == '__main__':
 
         rospy.spin()
         
-	except rospy.ROSInterruptException:
-		pass
+    except rospy.ROSInterruptException:
+        pass
 
 # TODO: aggiungere equazioni nuove
 # TODO: test funzionamento
