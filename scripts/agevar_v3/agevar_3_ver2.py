@@ -31,6 +31,16 @@ def curv2ang(lin_vel,curv):
 
     return ang_vel
 
+def direzione(lin_vel,curv):
+    
+    if (lin_vel<0):
+        if (curv=='inf'):
+            return 0, -lin_vel, 'inf'
+        else:
+            return 0, -lin_vel, -curv
+    else:
+        return 1, lin_vel, curv
+
 # Filtra le vibrazioni sulla posizione di riposo.
 # E scala i valori in ingresso dal topic "remote_topic":
 # vel: 0 / 462-562 / 1023 => -Max_Lin_vel (indietro) / 0 (fermo) / Max_Lin_vel (avanti)
@@ -135,14 +145,6 @@ def vel_motors(lin_vel,ang_vel,module):
     angle = theta[module]
 
     return wdx, wsx, angle
-
-
-def direzione(lin_vel,curv):
-    if (lin_vel<0):
-        return 0, -lin_vel, -curv
-    else:
-        return 1, lin_vel, curv
-
 
 
 """Struttura ROS"""
