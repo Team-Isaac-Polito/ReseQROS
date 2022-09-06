@@ -26,7 +26,7 @@ curv=512
 def curv2ang(lin_vel,curv):
     ang_vel=lin_vel/curv
 
-    if curv == const.Max_Curv: # quando il raggio di curvatura raggiunge il valore massimo il modulo procede a dritto senza curvare
+    if curv == 'inf': # quando il raggio di curvatura è infinito il modulo procede dritto senza curvare
         ang_vel=0
 
     return ang_vel
