@@ -19,7 +19,7 @@ d = 0.21         # [m] lunghezza dell'interasse tra le due ruote equivalenti
 
 r = 0.05        # [m] raggio delle ruote equivalenti
 
-w_max = 1 # [Hz] massima velocità di rotazione della ruota equivalente (motore di avanzamento)
+w_max = 2*pi # [rad/s] massima velocità di rotazione della ruota equivalente (motore di avanzamento)
 
 Max_Lin_Vel= (2*pi*w_max*r)/2 # [m/s] massima velocità lineare di un modulo
 
