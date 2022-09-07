@@ -165,7 +165,7 @@ def vel_motors(lin_vel,ang_vel,module):
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
 def assegnazione_velocità(vel,curv):
-    print('dati ricevuti: vel:'+str(vel)+' curv:'+str(curv)) #check1
+    print('\n\ndati ricevuti: vel:'+str(vel)+' curv:'+str(curv)) #check1
 
     # scalatura in ingresso
     lin_vel,curv = scalatura_in(vel,curv)
