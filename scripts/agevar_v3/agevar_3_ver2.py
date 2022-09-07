@@ -3,7 +3,7 @@
 import rospy
 from ReseQROS.msg import Remote, Motor
 from std_msgs.msg import UInt16
-import tf
+#import tf
 import constant as const
 import math
 
@@ -121,6 +121,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
 
     lin_vel_out = math.sqrt(lin_vel_out_x**2 + lin_vel_out_y**2)
 
+    '''
     # pubblica sul topic "/tf" la posizione e l'orientamento del sistema di riferimento del secondo modulo denominato "RFM_2"
     # rispetto al sistema di riferimento fisso chiamato "RFM_1"
     # Si può visualizzare graficamente tramite rviz
@@ -142,6 +143,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
         rospy.Time.now(),
         "RFM_3",
         "RFM_2")
+        '''
 
     return lin_vel_out, ang_vel_out
 
