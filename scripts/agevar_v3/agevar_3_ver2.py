@@ -206,7 +206,7 @@ def assegnazione_velocità(vel,curv):
         #print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
 
         if num_module!=0:
-            print('modulo '+str(num_module)+' -> angle: '+str(angle)+' [deg]')
+            print('modulo '+str(num_module)+' -> wsx:'+str(wsx)+' wdx'+str(wdx)+' angle:'+str(angle))
 
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
