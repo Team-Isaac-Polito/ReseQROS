@@ -112,7 +112,7 @@ def kinematic(lin_vel_in,ang_vel_in,module,segno):
     if segno==1:
         module=module+1
     theta_dot = -(1/const.b)*(ang_vel_in*(const.b+const.a*math.cos(theta[module]))+lin_vel_in*math.sin(theta[module]))
-    print('theta_dot: '+str(theta_dot)) #check
+    #print('theta_dot: '+str(theta_dot)) #check
     theta[module]=theta[module]+theta_dot*const.Ts
 
     ang_vel_out = ang_vel_in + theta_dot
