@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import rospy
 from ReseQROS.msg import Remote, Motor
 from std_msgs.msg import UInt16
@@ -165,14 +166,14 @@ def vel_motors(lin_vel,ang_vel,module):
 # Elabora e pubblica le velocità di rotazione dei motori di avanzamento (wdx,wsx) e imbardata (wi) di ogni modulo.
 # La funzione viene richiamata come callback della funzione listener non appena sono disponibili dei nuovi dati sul topic "remote_control"
 def assegnazione_velocità(vel,curv):
-    print('\n\ndati ricevuti: vel:'+str(vel)+' curv:'+str(curv)) #check1
+    #print('\n\ndati ricevuti: vel:'+str(vel)+' curv:'+str(curv)) #check1
 
     # scalatura in ingresso
     lin_vel,curv = scalatura_in(vel,curv)
-    print('scalatura_in: vel:'+str(lin_vel)+' curv:'+str(curv)) #check2
+    #print('scalatura_in: vel:'+str(lin_vel)+' curv:'+str(curv)) #check2
 
     segno,lin_vel,curv = direzione_in(lin_vel,curv)
-    print('direzione_in: vel:'+str(lin_vel)+' curv:'+str(curv)+' segno:'+str(segno)) #check3
+    #print('direzione_in: vel:'+str(lin_vel)+' curv:'+str(curv)+' segno:'+str(segno)) #check3
 
     # per ogni modulo ...
     if segno==1:
@@ -180,29 +181,32 @@ def assegnazione_velocità(vel,curv):
     else:
         vettore_moduli= list(range(const.N_MOD)) # indietro
         vettore_moduli.reverse()
-    print('vettore moduli: '+str(vettore_moduli)) #check4
+    #print('vettore moduli: '+str(vettore_moduli)) #check4
 
     # da curvatura a velocità angolare
     ang_vel=curv2ang(lin_vel,curv)
-    print('curv2ang: ang_vel: '+str(ang_vel)) #check5
+    #print('curv2ang: ang_vel: '+str(ang_vel)) #check5
 
     # definizione variabili strutturate per ROS
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    print('CICLO FOR:') #check6
+    #print('CICLO FOR:') #check6
     # per ogni modulo ...
     for num_module in vettore_moduli:
-        print('modulo: '+str(num_module)) #check7
+        #print('modulo: '+str(num_module)) #check7
 
         wdx, wsx, angle = vel_motors(lin_vel,ang_vel,num_module) # ... calcola wdx,wsx,wi in funzione della velocità lineare e angolare del modulo
-        print('vel_motors: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check8
+        #print('vel_motors: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check8
 
         wdx, wsx, angle = direzione_out(wdx, wsx, angle, segno)
-        print('direzione_out: wdx:'+str(wdx)+' wsx:'+str(wsx)+' angle:'+str(angle)) #check9
+        #print('direzione_out: wdx:'+str(wdx)+' wsx:'+str(wsx)+' angle:'+str(angle)) #check9
+
+        os.system('clear')
+        print('angle:'+str(angle))
 
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
-        print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
+        #print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
 
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
@@ -212,7 +216,7 @@ def assegnazione_velocità(vel,curv):
 
         if num_module != vettore_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module,segno) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
-            print('kinematic modulo successivo: lin_vel: '+str(lin_vel)+' ang_vel: '+str(ang_vel)) #check11
+            #print('kinematic modulo successivo: lin_vel: '+str(lin_vel)+' ang_vel: '+str(ang_vel)) #check11
 
 def vel_list(dataa):
     global vel
