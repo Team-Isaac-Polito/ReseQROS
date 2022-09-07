@@ -202,11 +202,10 @@ def assegnazione_velocità(vel,curv):
         wdx, wsx, angle = direzione_out(wdx, wsx, angle, segno)
         #print('direzione_out: wdx:'+str(wdx)+' wsx:'+str(wsx)+' angle:'+str(angle)) #check9
 
-        os.system('clear')
-        print('angle:'+str(angle))
-
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
         #print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
+
+        print('modulo'+str(num_module)+' -> angle:'+str(angle))
 
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
@@ -217,6 +216,8 @@ def assegnazione_velocità(vel,curv):
         if num_module != vettore_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module,segno) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
             #print('kinematic modulo successivo: lin_vel: '+str(lin_vel)+' ang_vel: '+str(ang_vel)) #check11
+            
+    os.system('clear')
 
 def vel_list(dataa):
     global vel
