@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from pyexpat.errors import XML_ERROR_INCOMPLETE_PE
 import rospy
 from ReseQROS.msg import Remote, Motor
 from std_msgs.msg import UInt16
@@ -65,10 +66,34 @@ def scalatura_in(lin_vel_in,curv_in):
     curv_out = curv_out-512 # da 0/512/1023 a -512/0/511
     if curv_out == 0:
         curv_out='inf' # da -50/50 a 'inf'
-    elif curv_out > 0:
-        curv_out = const.Max_Curv-(const.Max_Curv-const.Min_Curv)*(curv_out-51)/460 # da 51/511 a Max_Curv/Min_Curv
+    elif curv_out > 0: 
+        y_min=const.Max_Curv
+        y_max=const.Min_Curv
+        x_min=51
+        x_max=511
+        x=curv_out
+        '''
+        AUMENTANDO IL GRADO DELLA FUNZIONE INTERPOLANTE SI AUMENTA LA SENSIBILITA' DEL POTENZIOMETRO PER VALORI VICINI ALLA POSIZIONE DI RIPOSO!
+        E CONTEMPORANEMENTE SI DIMINUISCE LA SENSIBILITA' PER I VALORI ESTREMI
+        y=y_min+(y_max-y_min)/(x_min-x_max)*(x-x_max)      # interpolazione lineare
+        y=y_min+(y_max-y_min)/(x_min-x_max)**2*(x-x_max)**2 # interpolazione quadratica
+        '''
+        y=y_min+(y_max-y_min)/(x_min-x_max)**3*(x-x_max)**3 # interpolazione cubica        
+        curv_out=y
     elif curv_out < 0:
-        curv_out = -const.Max_Curv-(const.Max_Curv-const.Min_Curv)*(curv_out+50)/462 # da -512/-50 a -Min_Curv/-Max_Curv
+        y_min=-const.Max_Curv
+        y_max=-const.Min_Curv
+        x_min=-51
+        x_max=-512
+        x=curv_out
+        '''
+        AUMENTANDO IL GRADO DELLA FUNZIONE INTERPOLANTE SI AUMENTA LA SENSIBILITA' DEL POTENZIOMETRO PER VALORI VICINI ALLA POSIZIONE DI RIPOSO!
+        E CONTEMPORANEMENTE SI DIMINUISCE LA SENSIBILITA' PER I VALORI ESTREMI
+        y=y_min+(y_max-y_min)/(x_min-x_max)*(x-x_max)      # interpolazione lineare
+        y=y_min+(y_max-y_min)/(x_min-x_max)**2*(x-x_max)**2 # interpolazione quadratica
+        '''
+        y=y_min+(y_max-y_min)/(x_min-x_max)**3*(x-x_max)**3 # interpolazione cubica        
+        curv_out=y
     return lin_vel_out, curv_out
 
 # scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
