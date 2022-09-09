@@ -67,8 +67,8 @@ def scalatura_in(lin_vel_in,curv_in):
     if curv_out == 0:
         curv_out='inf' # da -50/50 a 'inf'
     elif curv_out > 0: 
-        y_min=const.Max_Curv
-        y_max=const.Min_Curv
+        y_min=const.Min_Curv 
+        y_max=const.Max_Curv
         x_min=51
         x_max=511
         x=curv_out
@@ -81,8 +81,8 @@ def scalatura_in(lin_vel_in,curv_in):
         y=y_min+(y_max-y_min)/(x_min-x_max)**3*(x-x_max)**3 # interpolazione cubica        
         curv_out=y
     elif curv_out < 0:
-        y_min=-const.Max_Curv
-        y_max=-const.Min_Curv
+        y_min=-const.Min_Curv 
+        y_max=-const.Max_Curv
         x_min=-51
         x_max=-512
         x=curv_out
@@ -230,8 +230,7 @@ def assegnazione_velocità(vel,curv):
         wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
         #print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
 
-        if num_module!=0:
-            print('modulo '+str(num_module)+' -> wsx:'+str(wsx)+' wdx'+str(wdx)+' angle:'+str(angle))
+        print('modulo '+str(num_module)+' -> wsx:'+str(wsx)+' wdx'+str(wdx)+' angle:'+str(angle))
 
         motor_msg.wdx = wdx
         motor_msg.wsx = wsx
