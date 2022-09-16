@@ -51,11 +51,10 @@ def direzione_out(wdx, wsx, angle, segno):
 
 # Filtra le vibrazioni sulla posizione di riposo.
 # E scala i valori in ingresso dal topic "remote_topic":
-# vel: 1023/0 => 0 / 462-562 / 1023 => -Max_Lin_vel (indietro) / 0 (fermo) / Max_Lin_vel (avanti)
+# vel: 0 / 462-562 / 1023 => -Max_Lin_vel (indietro) / 0 (fermo) / Max_Lin_vel (avanti)
 # curv: 1023/0 => 0 / 461 / 462-562 / 563 / 1023 => -Min_Curv (dx) / -Max_curv (dx) / 'inf' (Dritto) / Max_curv (sx) / Min_Curv (sx)
 def scalatura_in(lin_vel_in,curv_in):
 
-    lin_vel_in=1023-lin_vel_in # da 1023/0 a 0/1023
     curv_in=1023-curv_in # da 1023/0 a 0/1023
 
     lin_vel_out = 512 if 462 <= lin_vel_in <= 562 else lin_vel_in # filtro
