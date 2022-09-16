@@ -98,7 +98,7 @@ def scalatura_in(lin_vel_in,curv_in):
 
 # scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
 # e impone una saturazione dei valori se superano i valori massimi consentiti
-def scalatura_out(wdx,wsx,angle):
+def scalatura_out(wdx,wsx,angle,module):
     global theta # sat
 
     angle=math.degrees(angle)
@@ -237,7 +237,7 @@ def assegnazione_velocità(vel,curv):
         wdx, wsx, angle = direzione_out(wdx, wsx, angle, segno)
         #print('direzione_out: wdx:'+str(wdx)+' wsx:'+str(wsx)+' angle:'+str(angle)) #check9
 
-        wdx, wsx, angle = scalatura_out(wdx,wsx,angle) # ... scala i valori in uscita
+        wdx, wsx, angle = scalatura_out(wdx,wsx,angle,num_module) # ... scala i valori in uscita
         #print('scalatura_out: wdx: '+str(wdx)+' wsx: '+str(wsx)+' angle: '+str(angle)) #check10
 
         print('modulo '+str(num_module)+' -> wsx:'+str(wsx)+' wdx'+str(wdx)+' angle:'+str(angle))
