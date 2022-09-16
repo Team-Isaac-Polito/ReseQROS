@@ -4,7 +4,7 @@ import os
 from pyexpat.errors import XML_ERROR_INCOMPLETE_PE
 import rospy
 from ReseQROS.msg import Remote, Motor
-from std_msgs.msg import UInt16
+from std_msgs.msg import UInt16, Float32
 #import tf
 import constant as const
 import math
@@ -216,6 +216,13 @@ def assegnazione_velocità(vel,curv):
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
+    pub_wdx1=rospy.Publisher("grafico_wdx1",Float32,queue_size=10)
+    pub_wsx1=rospy.Publisher("grafico_wsx1",Float32,queue_size=10)
+    pub_wdx2=rospy.Publisher("grafico_wdx2",Float32,queue_size=10)
+    pub_wsx2=rospy.Publisher("grafico_wsx2",Float32,queue_size=10)
+    pub_wdx3=rospy.Publisher("grafico_wdx3",Float32,queue_size=10)
+    pub_wsx3=rospy.Publisher("grafico_wsx3",Float32,queue_size=10)
+
     #print('CICLO FOR:') #check6
     # per ogni modulo ...
     for num_module in vettore_moduli:
@@ -237,6 +244,16 @@ def assegnazione_velocità(vel,curv):
         motor_msg.angle = angle
         motor_msg.address = const.ADDRESSES[num_module]
         pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
+
+        if num_module==0:
+            pub_wdx1.publish(wdx)
+            pub_wsx1.publish(wsx)
+        if num_module==1:
+            pub_wdx2.publish(wdx)
+            pub_wsx2.publish(wsx)
+        if num_module==2:
+            pub_wdx3.publish(wdx)
+            pub_wsx3.publish(wsx)
 
         if num_module != vettore_moduli[-1]: # per tutti i moduli tranne l'ultimo ...
             lin_vel,ang_vel = kinematic(lin_vel,ang_vel,num_module,segno) # ... calcola i valori di velocità lineare e angolare del modulo successivo a partire dagli stessi valori del modulo precedente
