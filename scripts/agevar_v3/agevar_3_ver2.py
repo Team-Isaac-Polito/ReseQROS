@@ -99,14 +99,17 @@ def scalatura_in(lin_vel_in,curv_in):
 # scala i valori in uscita verso il topic "motor_topic" da Valore_min/Valore_max a 0/1023
 # e impone una saturazione dei valori se superano i valori massimi consentiti
 def scalatura_out(wdx,wsx,angle):
+    global theta # sat
 
     angle=math.degrees(angle)
 
     #saturazione dei comandi:
     if angle > const.ANGLE_MAX:
         angle = const.ANGLE_MAX
+        theta[module]=math.radians(const.ANGLE_MAX) # sat
     elif angle < -const.ANGLE_MAX:
-        angle = -const.ANGLE_MAX
+        angle = -const.ANGLE_MAX 
+        theta[module]=math.radians(-const.ANGLE_MAX) # sat
 
     if wdx > const.w_max:
         wdx = const.w_max
