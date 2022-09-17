@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-''' Andrea Grillo ''''
+''' Andrea Grillo '''
 
 import rospy
 from std_msgs.msg import UInt16
@@ -15,14 +15,14 @@ eez_servo = Servo(PIN_EEZ)
 def rescale(data):
     return (data-512)/512
 
-def eex(dataa):
+def eex_list(dataa):
     eex_servo.value = rescale(dataa.data) 
 
-def eey(dataa):
+def eey_list(dataa):
     #canbus
     print("todo canbus")
 
-def eez(dataa):
+def eez_list(dataa):
     eez_servo.value = rescale(dataa.data)
 
 
