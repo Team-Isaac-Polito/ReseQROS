@@ -18,7 +18,7 @@ eex_val = 0
 eez_val = 0
 
 def rescale(data):
-    return (data-512)/(512*500)
+    return (data-512)/(512*35)
 
 def eex_list(dataa):
     global eex_val
