@@ -18,16 +18,18 @@ eex_val = 0
 eez_val = 0
 
 def rescale(data):
-    return (data-512)/(512*5)
+    return (data-512)/(512*500)
 
 def eex_list(dataa):
     global eex_val
-    eex_val += rescale(dataa.data) 
+    eex_val += rescale(dataa.data)
+    eex_val = eex_val if -1 < eex_val < 1 else 1 if eex_val >= 1 else -1 
     eex_servo.value = eex_val
 
 def eez_list(dataa):
     global eez_val
     eez_val += rescale(dataa.data)
+    eez_val = eez_val if -1 < eez_val < 1 else 1 if eez_val >= 1 else -1 
     eez_servo.value = eez_val
 
 def eey_list(dataa):
