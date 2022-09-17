@@ -24,7 +24,7 @@ def eey_list(dataa):
     #canbus
     out = dataa.data.to_bytes(2, byteorder='little', signed=True)
     # ToDo at the moment address is hardcoded
-    msg = can.Message(arbitration_id=0x15,data=[definitions.SEND_EE_Y_AXIS, out[0], out[1]],is_extended_id=False) 
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
 
 def eez_list(dataa):
