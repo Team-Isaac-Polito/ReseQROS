@@ -3,6 +3,8 @@
 ''' Andrea Grillo '''
 
 import rospy
+import can
+import definitions
 from std_msgs.msg import UInt16
 from gpiozero import Servo
 
@@ -20,7 +22,10 @@ def eex_list(dataa):
 
 def eey_list(dataa):
     #canbus
-    print("todo canbus")
+    out = dataa.data.to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.SEND_EE_Y_AXIS, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
 
 def eez_list(dataa):
     eez_servo.value = rescale(dataa.data)
@@ -31,6 +36,8 @@ if __name__ == '__main__':
     try:
         rospy.init_node('endeffector') #inizializza il nodo "endeffector"
         rospy.loginfo("Hello! endeffector node started!")
+
+        canbus = can.interface.Bus(channel='can0', bustype='socketcan')
 
         rospy.Subscriber("eex",UInt16,eex_list)
         rospy.Subscriber("eey",UInt16,eey_list)
