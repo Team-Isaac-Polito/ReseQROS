@@ -36,9 +36,9 @@ def eez_list(dataa):
 def eey_list(dataa):
     #canbus
     global eey_val
-    eey_val += dataa.data / 35
+    eey_val += (dataa.data-512) / 35
     eey_val = eey_val if 0 < eey_val < 1023 else 1023 if eey_val >= 1023 else 0 
-    out = eey_val.to_bytes(2, byteorder='little', signed=True)
+    out = int(eey_val).to_bytes(2, byteorder='little', signed=True)
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
