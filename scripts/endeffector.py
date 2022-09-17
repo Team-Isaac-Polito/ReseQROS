@@ -14,11 +14,21 @@ PIN_EEZ = 19
 eex_servo = Servo(PIN_EEX)
 eez_servo = Servo(PIN_EEZ)
 
+eex_val = 0
+eez_val = 0
+
 def rescale(data):
-    return (data-512)/512
+    return (data-512)/(512*5)
 
 def eex_list(dataa):
-    eex_servo.value = rescale(dataa.data) 
+    global eex_val
+    eex_val += rescale(dataa.data) 
+    eex_servo.value = eex_val
+
+def eez_list(dataa):
+    global eez_val
+    eez_val += rescale(dataa.data)
+    eez_servo.value = eez_val
 
 def eey_list(dataa):
     #canbus
@@ -26,11 +36,6 @@ def eey_list(dataa):
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
-
-def eez_list(dataa):
-    eez_servo.value = rescale(dataa.data)
-
-
 
 if __name__ == '__main__':
     try:
