@@ -19,6 +19,7 @@ eey_val = 1023
 eez_val = 0
 
 def rescale(data):
+    data = 512 if 462 < data < 562 else data
     return (data-512)/(512*35)
 
 def eex_list(dataa):
@@ -35,6 +36,7 @@ def eez_list(dataa):
 
 def eey_list(dataa):
     #canbus
+    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
     global eey_val
     eey_val += (dataa.data-512) / 35
     eey_val = eey_val if 0 < eey_val < 1023 else 1023 if eey_val >= 1023 else 0 
