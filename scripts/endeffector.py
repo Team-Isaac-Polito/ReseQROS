@@ -40,10 +40,13 @@ def eey_list(dataa):
     global eey_val
     eey_val += (dataa.data-512) / 35
     eey_val = eey_val if 0 < eey_val < 1023 else 1023 if eey_val >= 1023 else 0 
-    out = int(eey_val).to_bytes(2, byteorder='little', signed=True)
-    # ToDo at the moment address is hardcoded
-    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
-    canbus.send(msg)
+
+    # definizione variabili strutturate per ROS
+    pub=rospy.Publisher("EE_topic",UInt16,queue_size=10)
+    msg=UInt16() 
+    msg.data = int(eey_val)
+    pub.publish(msg)
+
 
 if __name__ == '__main__':
     try:

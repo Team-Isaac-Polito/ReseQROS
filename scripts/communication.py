@@ -25,6 +25,15 @@ def motor_list(dataa):
 	writeNumbers(int(dataa.address),int(dataa.wsx),int(dataa.wdx),int(dataa.angle))
 	#rospy.loginfo("received curv")
 
+
+def ee_list(dataa):
+	
+    out = int(dataa.data).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
+	
 if __name__ == '__main__':
 	try:
 		rospy.init_node('communication')
@@ -33,6 +42,8 @@ if __name__ == '__main__':
 		canbus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 		rospy.Subscriber("motor_topic",Motor,motor_list)
+
+		rospy.Subscriber("EE_topic",UInt16,ee_list)
 
 		rospy.spin()
 
