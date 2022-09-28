@@ -18,6 +18,8 @@ eex_val = 0
 eey_val = 1023
 eez_val = 0
 
+pitch_val = 0 # ToDo check starting Value
+
 def rescale(data):
     data = 512 if 462 < data < 562 else data
     return (data-512)/(512*35)
@@ -47,6 +49,20 @@ def eey_list(dataa):
     msg.data = int(eey_val)
     pub.publish(msg)
 
+def pitch_list(dataa):
+    #canbus
+    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
+    global pitch_val
+    pitch_val += (dataa.data-512) / 35
+    pitch_val = pitch_val if 0 < pitch_val < 1023 else 1023 if pitch_val >= 1023 else 0 
+
+    # definizione variabili strutturate per ROS
+    pub=rospy.Publisher("PITCH_can",UInt16,queue_size=10)
+    msg=UInt16() 
+    msg.data = int(pitch_val)
+    pub.publish(msg)
+
+
 
 if __name__ == '__main__':
     try:
@@ -58,7 +74,9 @@ if __name__ == '__main__':
         rospy.Subscriber("eex",UInt16,eex_list)
         rospy.Subscriber("eey",UInt16,eey_list)
         rospy.Subscriber("eez",UInt16,eez_list)
-        
+
+        rospy.Subscriber("pitch",UInt16,pitch_list)
+
         rospy.spin()
         
     except rospy.ROSInterruptException:

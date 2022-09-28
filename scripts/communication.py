@@ -34,6 +34,13 @@ def ee_list(dataa):
     canbus.send(msg)
 
 	
+def pitch_list(dataa):
+	
+    out = int(dataa.data).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x17,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
 if __name__ == '__main__':
 	try:
 		rospy.init_node('communication')
@@ -44,6 +51,8 @@ if __name__ == '__main__':
 		rospy.Subscriber("motor_topic",Motor,motor_list)
 
 		rospy.Subscriber("EE_topic",UInt16,ee_list)
+
+		rospy.Subscriber("PITCH_can",UInt16,pitch_list)
 
 		rospy.spin()
 
