@@ -9,3 +9,4 @@ SEND_YAW_ENCODER =             0x07
 SEND_TRACTION_LEFT_SPEED =     0x08 
 SEND_TRACTION_RIGHT_SPEED =    0x09            
 SEND_BATTERY_VOLTAGE =         0x0A
+DATA_EE_PITCH =                0x0B
