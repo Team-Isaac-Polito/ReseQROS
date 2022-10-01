@@ -12,6 +12,13 @@ def assegnazione_velocità(vel,curv):
     curv = 512 if 462 <= curv <= 562 else curv # filtro
     curv = curv-512 # da 0/512/1023 a -512/0/511
 
+
+    v = ((512 - abs(curv)) * (vel / 512) + vel)
+    w = ((512 - abs(vel)) * (curv / 512) + curv)
+
+    vel = v
+    curv = w
+
     #angolo
     angle = curv * 30 / 512 # da -512/0/512 a -30/0/30
 
@@ -19,20 +26,20 @@ def assegnazione_velocità(vel,curv):
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    motor_msg.wdx = (vel - curv/2) if vel >= 0 else vel
-    motor_msg.wsx = (vel + curv/2) if vel >= 0 else vel
+    motor_msg.wdx = (vel - curv) if vel >= 0 else (vel/4)
+    motor_msg.wsx = (vel + curv) if vel >= 0 else (vel/4)
     motor_msg.angle = angle
     motor_msg.address = 21
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-    motor_msg.wdx = vel - curv / 4
-    motor_msg.wsx = vel + curv / 4
+    motor_msg.wdx = vel - curv / 2
+    motor_msg.wsx = vel + curv / 2
     motor_msg.angle = angle
     motor_msg.address = 22
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
     
-    motor_msg.wdx = (vel - curv/2) if vel < 0 else vel
-    motor_msg.wsx = (vel + curv/2) if vel < 0 else vel
+    motor_msg.wdx = (vel - curv) if vel < 0 else (vel/4)
+    motor_msg.wsx = (vel + curv) if vel < 0 else (vel/4)
     motor_msg.address = 23
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
