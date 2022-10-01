@@ -7,6 +7,7 @@ import can
 import definitions
 from std_msgs.msg import UInt16
 from gpiozero import Servo
+import time
 
 PIN_EEX = 18
 PIN_EEZ = 19
@@ -20,27 +21,40 @@ eez_val = 0
 
 pitch_val = 0 # ToDo check starting Value
 
+eex_time = eey_time = eez_time = pitch_time = time.time()
+
+
 def rescale(data):
     data = 512 if 462 < data < 562 else data
     return (data-512)/(512*35)
 
 def eex_list(dataa):
     global eex_val
-    eex_val += rescale(dataa.data)
+    global eex_time
+
+    act_time = time.time()
+    eex_val += rescale(dataa.data) * (act_time - eex_time)
     eex_val = eex_val if -1 < eex_val < 1 else 1 if eex_val >= 1 else -1 
     eex_servo.value = eex_val
+    eex_time = act_time
 
 def eez_list(dataa):
     global eez_val
-    eez_val += rescale(dataa.data)
+    global eez_time
+
+    act_time = time.time()
+    eez_val += rescale(dataa.data) * (act_time - eez_time)
     eez_val = eez_val if -1 < eez_val < 1 else 1 if eez_val >= 1 else -1 
     eez_servo.value = eez_val
+    eez_time = act_time
 
 def eey_list(dataa):
-    #canbus
-    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
     global eey_val
-    eey_val += (dataa.data-512) / 35
+    global eey_time
+
+    act_time = time.time()
+    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
+    eey_val += ((dataa.data-512) / 35) * (act_time - eey_time)
     eey_val = eey_val if 0 < eey_val < 1023 else 1023 if eey_val >= 1023 else 0 
 
     # definizione variabili strutturate per ROS
@@ -48,12 +62,15 @@ def eey_list(dataa):
     msg=UInt16() 
     msg.data = int(eey_val)
     pub.publish(msg)
+    eey_time = act_time
 
 def pitch_list(dataa):
-    #canbus
-    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
     global pitch_val
-    pitch_val += (dataa.data-512) / 35
+    global pitch_time
+
+    act_time = time.time()
+    dataa.data = 512 if 462 < dataa.data < 562 else dataa.data
+    pitch_val += ((dataa.data-512) / 35) * (act_time - eey_time)
     pitch_val = pitch_val if 0 < pitch_val < 1023 else 1023 if pitch_val >= 1023 else 0 
 
     # definizione variabili strutturate per ROS
@@ -61,6 +78,8 @@ def pitch_list(dataa):
     msg=UInt16() 
     msg.data = int(pitch_val)
     pub.publish(msg)
+
+    pitch_time = act_time
 
 
 
