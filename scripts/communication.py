@@ -8,54 +8,110 @@ import rospy
 from ReseQROS.msg import Motor
 from std_msgs.msg import UInt16
 
-def writeNumbers(addr,vsx,vdx,angle):
-	out = vsx.to_bytes(2, byteorder='little', signed=True)
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
-	canbus.send(msg)
 
-	out = vdx.to_bytes(2, byteorder='little', signed=True)
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_TRACTION_RIGHT, out[0], out[1]],is_extended_id=False)
-	canbus.send(msg)
+eex_val = 0
+eey_val = 1023
+eez_val = 0
+pitch_val = 0 # ToDo check starting Value
 
-	out = angle.to_bytes(2, byteorder='little', signed=True)
-	msg = can.Message(arbitration_id=addr,data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
-	canbus.send(msg)
+eex_time = eey_time = eez_time = pitch_time = time.time()
+
+
+def filter_center(data):
+    return 512 if 462 < data < 562 else data
+def interval(data):
+    return data if 0 <= data <= 1023 else 1023 if data > 1023 else 0 
+
 
 def motor_list(dataa):
-	writeNumbers(int(dataa.address),int(dataa.wsx),int(dataa.wdx),int(dataa.angle))
-	#rospy.loginfo("received curv")
-
-
-def ee_list(dataa):
-	
-    out = int(dataa.data).to_bytes(2, byteorder='little', signed=True)
-    # ToDo at the moment address is hardcoded
-    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH, out[0], out[1]],is_extended_id=False) 
+    out = int(dataa.wsx).to_bytes(2, byteorder='little', signed=True)
+    msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
     canbus.send(msg)
 
-	
+    out = int(dataa.wdx).to_bytes(2, byteorder='little', signed=True)
+    msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_TRACTION_RIGHT, out[0], out[1]],is_extended_id=False)
+    canbus.send(msg)
+
+    out = int(dataa.angle).to_bytes(2, byteorder='little', signed=True)
+    msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
+    canbus.send(msg)
+
+
 def pitch_list(dataa):
-	
-    out = int(dataa.data).to_bytes(2, byteorder='little', signed=True)
+    global pitch_val
+    global pitch_time
+
+    act_time = time.time()
+    dataa.data = filter_center(dataa.data)
+    pitch_val += ((dataa.data-512) / 35) * (act_time - eey_time)
+    pitch_val = interval(pitch_val)
+
+    out = int(pitch_val).to_bytes(2, byteorder='little', signed=True)
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x17,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
 
+
+def ee_pitch_list(dataa):
+    global eey_val
+    global eey_time
+
+    act_time = time.time()
+    dataa.data = filter_center(dataa.data)
+    eey_val += ((dataa.data-512) / 35) * (act_time - eey_time)
+    eey_val = interval(eey_val)
+
+    out = int(eey_val).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
+
+def ee_pitch2_list(dataa):
+    global eez_val
+    global eez_time
+
+    act_time = time.time()
+    eez_val += filter_center(dataa.data) * (act_time - eez_time)
+    eez_val = eez_val if -1 < eez_val < 1 else 1 if eez_val >= 1 else -1 
+    eez_time = act_time
+    
+    out = int(eez_val).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH2, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
+
+def ee_roll_list(dataa):
+    global eex_val
+    global eex_time
+    
+    act_time = time.time()
+    eex_val += filter_center(dataa.data) * (act_time - eex_time)
+    eex_val = interval(eex_val)
+    eex_time = act_time
+
+    out = int(eex_val).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_ROLL, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
+
 if __name__ == '__main__':
-	try:
-		rospy.init_node('communication')
-		rospy.loginfo("Hello! communication node started!")
+    try:
+        rospy.init_node('communication')
+        rospy.loginfo("Hello! communication node started!")
 
-		canbus = can.interface.Bus(channel='can0', bustype='socketcan')
+        canbus = can.interface.Bus(channel='can0', bustype='socketcan')
 
-		rospy.Subscriber("motor_topic",Motor,motor_list)
+        rospy.Subscriber("motor_topic",Motor,motor_list)
+        rospy.Subscriber("eex",UInt16,ee_roll_list)
+        rospy.Subscriber("eey",UInt16,ee_pitch_list)
+        rospy.Subscriber("eez",UInt16,ee_pitch2_list)
+        rospy.Subscriber("pitch",UInt16,pitch_list)
 
-		rospy.Subscriber("EE_topic",UInt16,ee_list)
+        rospy.spin()
 
-		rospy.Subscriber("PITCH_can",UInt16,pitch_list)
-
-		rospy.spin()
-
-	except rospy.ROSInterruptException:
-		pass
+    except rospy.ROSInterruptException:
+        pass
 
