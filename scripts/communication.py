@@ -29,9 +29,9 @@ def motor_list(dataa):
     msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_TRACTION_RIGHT, out[0], out[1]],is_extended_id=False)
     canbus.send(msg)
 
-    out = int(dataa.angle).to_bytes(2, byteorder='little', signed=True)
-    msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
-    canbus.send(msg)
+    #out = int(dataa.angle).to_bytes(2, byteorder='little', signed=True)
+    #msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_YAW, out[0], out[1]],is_extended_id=False)
+    #canbus.send(msg)
 
 def twist_list(data):
     global pitch_val
