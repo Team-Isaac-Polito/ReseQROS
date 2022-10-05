@@ -9,9 +9,9 @@ from ReseQROS.msg import Motor
 from std_msgs.msg import UInt16
 
 
-eex_val = 0
+eex_val = 512
 eey_val = 1023
-eez_val = 0
+eez_val = 512
 pitch_val = 0 # ToDo check starting Value
 
 eex_time = eey_time = eez_time = pitch_time = time.time()
@@ -43,10 +43,10 @@ def pitch_list(dataa):
 
     act_time = time.time()
     dataa.data = filter_center(dataa.data)
-    pitch_val += ((dataa.data-512) / 35) * (act_time - eey_time)
+    pitch_val += ((dataa.data-512) / 6000) * (act_time - eey_time)
     pitch_val = interval(pitch_val)
-
     out = int(pitch_val).to_bytes(2, byteorder='little', signed=True)
+    pitch_time = act_time
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x17,data=[definitions.DATA_PITCH, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
@@ -55,15 +55,28 @@ def pitch_list(dataa):
 def ee_pitch_list(dataa):
     global eey_val
     global eey_time
+    global eez_val
+    global eez_time
 
     act_time = time.time()
     dataa.data = filter_center(dataa.data)
-    eey_val += ((dataa.data-512) / 35) * (act_time - eey_time)
+    eey_val += (dataa.data-512) * (act_time - eey_time)
     eey_val = interval(eey_val)
+    eey_time = act_time
 
     out = int(eey_val).to_bytes(2, byteorder='little', signed=True)
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH, out[0], out[1]],is_extended_id=False) 
+    canbus.send(msg)
+
+    act_time = time.time()
+    eez_val += (filter_center(dataa.data)-512) * (act_time - eez_time)
+    eez_val = interval(eez_val)
+    eez_time = act_time
+
+    out = int(eez_val).to_bytes(2, byteorder='little', signed=True)
+    # ToDo at the moment address is hardcoded
+    msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH2, out[0], out[1]],is_extended_id=False) 
     canbus.send(msg)
 
 
@@ -72,10 +85,10 @@ def ee_pitch2_list(dataa):
     global eez_time
 
     act_time = time.time()
-    eez_val += filter_center(dataa.data) * (act_time - eez_time)
-    eez_val = eez_val if -1 < eez_val < 1 else 1 if eez_val >= 1 else -1 
+    eez_val += (filter_center(dataa.data)-512) * (act_time - eez_time)
+    eez_val = interval(eez_val)
     eez_time = act_time
-    
+
     out = int(eez_val).to_bytes(2, byteorder='little', signed=True)
     # ToDo at the moment address is hardcoded
     msg = can.Message(arbitration_id=0x15,data=[definitions.DATA_EE_PITCH2, out[0], out[1]],is_extended_id=False) 
@@ -85,9 +98,9 @@ def ee_pitch2_list(dataa):
 def ee_roll_list(dataa):
     global eex_val
     global eex_time
-    
+
     act_time = time.time()
-    eex_val += filter_center(dataa.data) * (act_time - eex_time)
+    eex_val += (filter_center(dataa.data)-512) * (act_time - eex_time)
     eex_val = interval(eex_val)
     eex_time = act_time
 
