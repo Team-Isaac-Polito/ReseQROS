@@ -1,23 +1,16 @@
 #!/usr/bin/env python3
 
 import rospy
-from ReseQROS.msg import Remote, Motor
-from std_msgs.msg import UInt16, Float32
+from ReseQROS.msg import Motor
+from std_msgs.msg import UInt16
+from geometry_msgs.msg import Twist
 
+def list(data):
+    v = data.linear.y
+    w = data.linear.x
 
-def assegnazione_velocità(vel,curv):
-    vel = 512 if 462 <= vel <= 562 else vel # filtro
-    vel = vel-512 # da 0/512/1023 a -512/0/511
-
-    curv = 512 if 462 <= curv <= 562 else curv # filtro
-    curv = curv-512 # da 0/512/1023 a -512/0/511
-
-
-    v = ((512 - abs(curv)) * (vel / 512) + vel)
-    w = ((512 - abs(vel)) * (curv / 512) + curv)
-
-    vel = v
-    curv = w
+    vel = ((512 - abs(w)) * (v / 512) + v)
+    curv = ((512 - abs(v)) * (w / 512) + w)
 
     #angolo
     angle = curv * 30 / 512 # da -512/0/512 a -30/0/30
@@ -43,24 +36,12 @@ def assegnazione_velocità(vel,curv):
     motor_msg.address = 23
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-def vel_list(dataa):
-    global vel
-    vel=int(dataa.data)
-
-
-def curv_list(dataa):
-    global curv
-    curv=int(dataa.data)
-    assegnazione_velocità(vel,curv)
-
-
 if __name__ == '__main__':
     try:
         rospy.init_node('agevar') #inizializza il nodo "agevar"
         rospy.loginfo("Hello! agevar node started!")
 
-        rospy.Subscriber("vel",UInt16,vel_list)
-        rospy.Subscriber("curv",UInt16,curv_list)
+        rospy.Subscriber("twist_joystick",Twist,list)
 
         rospy.spin()
         
