@@ -39,6 +39,8 @@ def twist_list(data):
     global eey_val
     global eez_val
 
+    global last_time
+
     act_time = time.time()
     dt = act_time - last_time
     
@@ -51,7 +53,7 @@ def twist_list(data):
     eey_val = interval(eey_val)
 
     #EE_pitch2
-    eez_val += (data.angular.y + data.angular.z) * dt
+    eez_val += (data.angular.y*0.75 + data.angular.z) * dt
     eez_val = interval(eez_val)
 
     #EE_roll
