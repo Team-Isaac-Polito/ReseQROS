@@ -1,7 +1,11 @@
 <launch>
-<!--	<node name="remote_control" pkg="ReseQROS" type="remote-control.py" output="screen"/>-->
+	<machine name="telecomando" address="http://10.142.0.111:11311" ros-root="/opt/ros/noetic/env.sh" ros-package-path="" user="ubuntu">
+
+	<node machine="telecomando" name="rosserial" pkg="rosserial" type="...py" output="screen"/>
+
 <!--	<node name="agevar" pkg="ReseQROS" type="agevar.py" output="screen"/>-->
 	<node name="movementTest" pkg="ReseQROS" type="movementTest.py" output="screen"/>
 	<node name="communication" pkg="ReseQROS" type="communication.py" output="screen"/>
 	<node name="endeffector" pkg="ReseQROS" type="endeffector.py" output="screen"/>
+	<node name="camera" pkg="ReseQROS" type="...py" output="screen"/>	
 </launch>
