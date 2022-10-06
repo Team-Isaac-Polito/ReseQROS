@@ -19,21 +19,24 @@ def list(data):
     pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    motor_msg.wdx = (vel - curv) if vel >= 0 else (vel/4)
-    motor_msg.wsx = (vel + curv) if vel >= 0 else (vel/4)
+    motor_msg.wdx = int((vel - curv) if vel >= 0 else (vel + curv/4))
+    motor_msg.wsx = int((vel + curv) if vel >= 0 else (vel - curv/4))
     motor_msg.angle = angle
     motor_msg.address = 21
+    print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-    motor_msg.wdx = vel - curv / 2
-    motor_msg.wsx = vel + curv / 2
+    motor_msg.wdx = int((vel - curv/2) if vel >= 0 else (vel + curv/4))
+    motor_msg.wsx = int((vel + curv/2) if vel >= 0 else (vel - curv/4))
     motor_msg.angle = angle
     motor_msg.address = 22
+    print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
-    
-    motor_msg.wdx = (vel - curv) if vel < 0 else (vel/4)
-    motor_msg.wsx = (vel + curv) if vel < 0 else (vel/4)
+
+    motor_msg.wdx = int((vel - curv/4) if vel >= 0 else (vel + curv))
+    motor_msg.wsx = int((vel + curv/4) if vel >= 0 else (vel - curv))
     motor_msg.address = 23
+    print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
 if __name__ == '__main__':
