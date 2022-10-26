@@ -1,12 +1,16 @@
 <launch>
-	<machine name="telecomando" address="http://10.142.0.111:11311" user="ubuntu" />
+	<machine name="telecomando" address="10.142.0.111" user="ubuntu" />
 
-	<node machine="telecomando" name="rosserial" pkg="rosserial_arduino" type="serial_node.py" output="screen"/>
-	<node machine="telecomando" name="rqt" pkg="rqt_gui" type="rqt_gui" output="screen"/>
-
-<!--	<node name="agevar" pkg="ReseQROS" type="agevar.py" output="screen"/>-->
+	<node machine="telecomando" name="rosserial" pkg="rosserial_arduino" type="serial_node.py" output="screen">
+		<param name="port"              type="string"               value="/dev/ttyACM0"/>
+    	<param name="baud"              type="int"                  value="57600"/>
+	</node>
+	
 	<node name="movementTest" pkg="ReseQROS" type="movementTest.py" output="screen"/>
 	<node name="communication" pkg="ReseQROS" type="communication.py" output="screen"/>
-	<node name="endeffector" pkg="ReseQROS" type="endeffector.py" output="screen"/>
-	<include file="$(find realsense2_camera)/launch/rs_camera.launch" />
+<!--	<node name="endeffector" pkg="ReseQROS" type="endeffector.py" output="screen"/> -->
+<!--	<node machine="telecomando" name="rqt" pkg="rqt_gui" type="rqt_gui" output="screen"/>-->
+
+<!--	<node name="agevar" pkg="ReseQROS" type="agevar.py" output="screen"/>-->
+<!--	<include file="$(find realsense2_camera)/launch/rs_camera.launch" /> -->
 </launch>
