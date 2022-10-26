@@ -26,7 +26,7 @@ def list(data):
     print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
-    motor_msg.wdx = int((vel - curv/2) if vel >= 0 else (vel + curv/4))
+    '''motor_msg.wdx = int((vel - curv/2) if vel >= 0 else (vel + curv/4))
     motor_msg.wsx = int((vel + curv/2) if vel >= 0 else (vel - curv/4))
     motor_msg.angle = angle
     motor_msg.address = 22
@@ -38,7 +38,8 @@ def list(data):
     motor_msg.address = 23
     print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
-
+    '''
+    
 if __name__ == '__main__':
     try:
         rospy.init_node('agevar') #inizializza il nodo "agevar"
