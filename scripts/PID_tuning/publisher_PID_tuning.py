@@ -22,7 +22,7 @@ def publisher():
             lin_vel_msg=512
             r_curv_msg=512
         else:
-            lin_vel_msg=0 # max velocity
+            lin_vel_msg=250
             r_curv_msg=512
 
         t+=Ts

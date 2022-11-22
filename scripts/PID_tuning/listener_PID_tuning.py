@@ -9,28 +9,29 @@ w_measure_left=[]
 w_measure_right=[]
 w_reference=[]
 
-def callback_plot():
+def callback_plot(dataa):
     global w_measure_left, w_measure_right, w_reference
-
-    
 
     plt.plot(w_reference,'k',label='reference')
     plt.plot(w_measure_left,'r',label='measure_left')
     plt.plot(w_measure_right,'b',label='measure_right')
 
-    plt.show
+    plt.show()
 
 def callback_reference(dataa):
     global w_reference
-    w_reference.append(dataa.data)
+    value=(512-dataa.data)/512*65 # [rpm]
+    w_reference.append(value)
 
 def callback_measure_left(dataa):
     global w_measure_left
-    w_measure_left.append(dataa.data)
+    value=dataa.data/1000
+    w_measure_left.append(value) # [rpm]
 
 def callback_measure_right(dataa):
     global w_measure_right
-    w_measure_right.append(dataa.data)
+    value=dataa.data/1000
+    w_measure_right.append(value) # [rpm]
 
 def listener():
     rospy.Subscriber("lin_vel",UInt16,callback_reference)
