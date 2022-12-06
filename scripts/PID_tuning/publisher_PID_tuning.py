@@ -2,13 +2,16 @@
 
 import rospy
 from std_msgs.msg import UInt16
+from ReseQROS.msg import Motor
+from math import pi
 
 def publisher():
-    freq=100 # Hz
+    freq=10 # Hz
     Ts=1/freq
 
-    pub_lin_vel=rospy.Publisher("lin_vel",UInt16,queue_size=10)
-    pub_r_curv=rospy.Publisher("r_curv",UInt16,queue_size=10)
+    pub_motor=rospy.Publisher("motor_topic",Motor,queue_size=10)
+    motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
+
     pub_flag=rospy.Publisher("flag",UInt16,queue_size=10)
 
     rate=rospy.Rate(freq)
@@ -19,16 +22,20 @@ def publisher():
     while not rospy.is_shutdown() and t<T_tuning:
 
         if t<1:
-            lin_vel_msg=512
-            r_curv_msg=512
+            motor_msg.wdx = 0
+            motor_msg.wsx = 0
+            motor_msg.angle = 0
+            motor_msg.address = 21
         else:
-            lin_vel_msg=250
-            r_curv_msg=512
+            w_max=2*pi
+            motor_msg.wdx = 1023
+            motor_msg.wsx = 1023
+            motor_msg.angle = 0
+            motor_msg.address = 21
 
         t+=Ts
 
-        pub_lin_vel.publish(lin_vel_msg)
-        pub_r_curv.publish(r_curv_msg)
+        pub_motor.publish(motor_msg)
 
         rate.sleep()
     
