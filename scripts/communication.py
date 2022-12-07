@@ -83,7 +83,7 @@ if __name__ == '__main__':
         rospy.init_node('communication')
         rospy.loginfo("Hello! communication node started!")
 
-        canbus = can.interface.Bus(channel='can0', bustype='socketcan')
+        canbus = can.interface.Bus(channel='can1', bustype='socketcan')
 
         rospy.Subscriber("motor_topic",Motor,motor_list)
         rospy.Subscriber("twist_joystick",Twist,twist_list)
