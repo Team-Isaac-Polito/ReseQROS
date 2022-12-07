@@ -28,8 +28,8 @@ def publisher():
             motor_msg.address = 21
         else:
             w_max=2*pi
-            motor_msg.wdx = 1023
-            motor_msg.wsx = 1023
+            motor_msg.wdx = 750
+            motor_msg.wsx = 750
             motor_msg.angle = 0
             motor_msg.address = 21
 
@@ -37,17 +37,15 @@ def publisher():
 
         pub_motor.publish(motor_msg)
 
-        pub_flag.publish(0)
-
         rate.sleep()
     
-    pub_flag.publish(1)
     motor_msg.wdx = 0
     motor_msg.wsx = 0
     motor_msg.angle = 0
     motor_msg.address = 21
     pub_motor.publish(motor_msg)
 
+    pub_flag.publish(1)
 
 # Main function 
 def main_function():

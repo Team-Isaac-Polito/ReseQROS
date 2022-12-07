@@ -35,30 +35,29 @@ def plot():
         axs[1].plot(w_measure_right_n,colors[i],label=f'Kp={Kp[i]} Kd={Kd[i]} Ki={Ki[i]}')
         axs[1].legend(fontsize='small')
 
-    plt.savefig(f'/home/isaac/catkin_ws/src/ReseQROS/scripts/PID_tuning/figures/fig')
-    plt.show()
+    plt.savefig(f'./fig')
+    #plt.show()
 
 
 def callback_stop(dataa):
     global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start, n
 
-    if dataa==1:
-        flag_start=0
+    flag_start=0
 
-        Kp.append(input('Kd: '))
-        Kd.append(input('Kp: '))
-        Ki.append(input('Ki: '))
-        print('\n')
-        stop=input('continue? [Enter:yes /:no]')
-        print('\n')
+    Kp.append(input('Kd: '))
+    Kd.append(input('Kp: '))
+    Ki.append(input('Ki: '))
+    print('\n')
+    stop=input('continue? [Enter:yes /:no]')
+    print('\n')
 
-        if stop=='/':
-            plot()
-            #rospy.on_shutdown('stop_program')
-        else:       
-            n+=1
-            w_measure_left.append([])
-            w_measure_right.append([])
+    if stop=='/':
+        plot()
+        #rospy.on_shutdown('stop_program')
+    else:       
+        n+=1
+        w_measure_left.append([])
+        w_measure_right.append([])
 
 def callback_reference(dataa):
     global wsx_reference, wdx_reference, flag_start, n
