@@ -40,6 +40,12 @@ def publisher():
         rate.sleep()
     
     pub_flag.publish(1)
+    motor_msg.wdx = 0
+    motor_msg.wsx = 0
+    motor_msg.angle = 0
+    motor_msg.address = 21
+    pub_motor.publish(motor_msg)
+
 
 # Main function 
 def main_function():
