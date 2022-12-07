@@ -6,7 +6,7 @@ from ReseQROS.msg import Motor
 from math import pi
 
 def publisher():
-    freq=10 # Hz
+    freq=100 # Hz
     Ts=1/freq
 
     pub_motor=rospy.Publisher("motor_topic",Motor,queue_size=10)
