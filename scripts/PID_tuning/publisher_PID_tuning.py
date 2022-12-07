@@ -37,6 +37,8 @@ def publisher():
 
         pub_motor.publish(motor_msg)
 
+        pub_flag.publish(0)
+
         rate.sleep()
     
     pub_flag.publish(1)

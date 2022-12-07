@@ -42,22 +42,23 @@ def plot():
 def callback_stop(dataa):
     global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start, n
 
-    flag_start=0
+    if dataa==1:
+        flag_start=0
 
-    Kp.append(input('Kd: '))
-    Kd.append(input('Kp: '))
-    Ki.append(input('Ki: '))
-    print('\n')
-    stop=input('continue? [Enter:yes /:no]')
-    print('\n')
+        Kp.append(input('Kd: '))
+        Kd.append(input('Kp: '))
+        Ki.append(input('Ki: '))
+        print('\n')
+        stop=input('continue? [Enter:yes /:no]')
+        print('\n')
 
-    if stop=='/':
-        plot()
-        #rospy.on_shutdown('stop_program')
-    else:       
-        n+=1
-        w_measure_left.append([])
-        w_measure_right.append([])
+        if stop=='/':
+            plot()
+            #rospy.on_shutdown('stop_program')
+        else:       
+            n+=1
+            w_measure_left.append([])
+            w_measure_right.append([])
 
 def callback_reference(dataa):
     global wsx_reference, wdx_reference, flag_start, n
