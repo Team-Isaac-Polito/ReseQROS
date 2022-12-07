@@ -85,27 +85,19 @@ def recv_data(mess):
 	global currLeftPub
 	global currRightPub
 
-	if mess.data[0] == definitions.MOTOR_TEMPERATURE:
+	if mess.data[0] == definitions.SEND_TEMPERATURE:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[1],mess.data[2],mess.data[3],mess.data[4]]))
 		msg.data = val
 		tempPub.publish(msg)
-	elif mess.data[0] == definitions.MOTOR_CURRENT:
-		msg = UInt16()
-		val = int.from_bytes(bytearray([mess.data[1],mess.data[2]]), byteorder='little', signed=True)
-		msg.data = val
-		currLeftPub.publish(msg)
-		val = int.from_bytes(bytearray([mess.data[3],mess.data[4]]), byteorder='little', signed=True)
-		msg.data = val
-		currRightPub.publish(msg)
 	elif mess.data[0] == definitions.SEND_TRACTION_LEFT_SPEED:
 		msg = Float32()
-		val = struct.unpack('f',bytearray([mess.data[1],mess.data[2],mess.data[3],mess.data[4]]))
+		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
 		msg.data = float(val[0])
 		tracLeftPub.publish(msg)
 	elif mess.data[0] == definitions.SEND_TRACTION_RIGHT_SPEED:
 		msg = Float32()
-		val = struct.unpack('f',bytearray([mess.data[1],mess.data[2],mess.data[3],mess.data[4]]))
+		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
 		msg.data = float(val[0])
 		tracRightPub.publish(msg)
 	elif mess.data[0] == definitions.SEND_YAW_ENCODER:

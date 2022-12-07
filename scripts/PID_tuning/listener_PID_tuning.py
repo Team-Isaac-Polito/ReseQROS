@@ -66,8 +66,8 @@ def callback_reference(dataa):
     flag_start=1
     
     if n==0:
-        value_sx=dataa.wsx/1023*130 # [rpm]
-        value_dx=dataa.wdx/1023*130
+        value_sx=dataa.wsx/1023*65 # [rpm]
+        value_dx=dataa.wdx/1023*65
 
         wsx_reference.append(value_sx)
         wdx_reference.append(value_dx)
