@@ -132,6 +132,11 @@ if __name__ == '__main__':
 		tracRightPub=rospy.Publisher("w_measure_right",Float32,queue_size=10)
 		yawAnglePub=rospy.Publisher("yaw_angle",Float32,queue_size=10)
 		
+		listener = can.Listener()
+		listener.on_message_received = recv_data
+		notifier = can.Notifier(canbus, [listener])
+
+		
 		rospy.spin()
 
 	except rospy.ROSInterruptException:
