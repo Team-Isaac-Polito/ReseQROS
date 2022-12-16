@@ -7,6 +7,7 @@ from ReseQROS.msg import Motor
 from math import pi
 import matplotlib.pyplot as plt
 import time
+import csv
 
 w_measure_left=[]
 w_measure_right=[]
@@ -15,7 +16,7 @@ wdx_reference=[]
 Kp,Kd,Ki=0,0,0
 flag_start=0
 
-def callback_stop(dataa):
+def plot():
     global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start
 
     flag_start=0
@@ -27,6 +28,8 @@ def callback_stop(dataa):
     axs[0].plot(wsx_reference,'r',label='reference_left')
     axs[1].plot(wdx_reference,'r',label='reference_right')
 
+    wsx_reference=wsx_reference[:500]
+    wdx_reference=wdx_reference[:500]
     w_measure_left=w_measure_left[:500]
     w_measure_right=w_measure_right[:500]
 
@@ -38,6 +41,29 @@ def callback_stop(dataa):
     t=time.strftime("%Hh_%Mm_%Ss")
     plt.savefig(f'./fig_{t}')
     #plt.show()
+
+def data_csv():
+    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, flag_start
+
+    t=time.strftime("%Hh_%Mm_%Ss")
+
+    wsx_reference=wsx_reference[:500]
+    wdx_reference=wdx_reference[:500]
+    w_measure_left=w_measure_left[:500]
+    w_measure_right=w_measure_right[:500]
+
+    with open(f'./data_{t}.csv', mode='a', newline='') as csv_file:    
+        csv_writer = csv.writer(csv_file, delimiter=',') 
+        csv_writer.writerow(wsx_reference)
+        csv_writer.writerow(w_measure_left)
+        csv_writer.writerow(wdx_reference)
+        csv_writer.writerow(w_measure_right)
+
+def callback_stop(dataa):
+
+    plot()
+    data_csv()
+    
 
 def callback_reference(dataa):
     global wsx_reference, wdx_reference, flag_start
