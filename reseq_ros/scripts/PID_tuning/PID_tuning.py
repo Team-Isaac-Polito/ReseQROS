@@ -93,7 +93,6 @@ def listener():
     rospy.Subscriber("w_measure_right",Float32,callback_measure_right)
     rospy.Subscriber("motor_topic",Motor,callback_reference)
     rospy.Subscriber("flag",UInt16,callback_stop)
-    rospy.spin()
 
 def publisher_K_PID():
     global Kp,Kd,Ki
@@ -106,12 +105,53 @@ def publisher_K_PID():
     pub_Kd.publish(Kd)
     pub_Ki.publish(Ki)
 
+def publisher():
+    freq=100 # Hz
+    Ts=1/freq
+
+    pub_motor=rospy.Publisher("motor_topic",Motor,queue_size=10)
+    motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
+
+    pub_flag=rospy.Publisher("flag",UInt16,queue_size=10)
+
+    rate=rospy.Rate(freq)
+
+    t=0
+    T_tuning=5
+
+    while not rospy.is_shutdown() and t<T_tuning:
+
+        if t<1:
+            motor_msg.wdx = 0
+            motor_msg.wsx = 0
+            motor_msg.angle = 0
+            motor_msg.address = 21
+        else:
+            motor_msg.wdx = 5000 #centi_rpm
+            motor_msg.wsx = 5000 #centi_rpm
+            motor_msg.angle = 0
+            motor_msg.address = 21
+
+        t+=Ts
+
+        pub_motor.publish(motor_msg)
+
+        rate.sleep()
+    
+    motor_msg.wdx = 0
+    motor_msg.wsx = 0
+    motor_msg.angle = 0
+    motor_msg.address = 21
+    pub_motor.publish(motor_msg)
+
+    pub_flag.publish(1)
+
 # Main function 
 def main_function():
     global Kp,Kd,Ki
 
-    rospy.init_node('listener_PID_tuning')
-    rospy.loginfo("Hello! listener_PID_tuning node started!")
+    rospy.init_node('PID_tuning')
+    rospy.loginfo("Hello! PID_tuning node started!")
     print('Inserisci i valori del PID prima di iniziare:')
     Kp=input('Kp: ')
     Kd=input('Kd: ')
@@ -119,6 +159,8 @@ def main_function():
     print('Ora puoi eseguire il publisher!')
     publisher_K_PID()
     listener()
+    publisher()
+    rospy.spin()
 
 if __name__ == '__main__':
 	try:
