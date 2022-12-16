@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>reseq-ros</name>
+  <name>reseq_ros</name>
   <version>0.0.0</version>
   <description>The ReseQROS package</description>
 
   <!-- Maintainers -->
   <maintainer email="team.isaac.polito@gmail.com">Team ISAAC</maintainer>
 
+  <license>aVeryGoodLicense!</license>
 
   <author email="marcofincato777@gmail.com">Marco Fincato</author>
   <author email="marcobarbon97@gmail.com">Marco Barbon</author>

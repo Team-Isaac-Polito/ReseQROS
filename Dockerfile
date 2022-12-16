@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y build-essential python3-can \
 RUN mkdir -p /catkin_ws/src/
 WORKDIR /catkin_ws
 #RUN /bin/bash -c 'git clone https://github.com/Team-Isaac-Polito/ReseQROS.git src/ReseQROS'
-COPY ./reseq-ros /catkin_ws/src/
+COPY ./reseq_ros /catkin_ws/src/
 
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; source devel/setup.bash'
