@@ -3,7 +3,6 @@
 import rospy
 from std_msgs.msg import UInt16
 from ReseQROS.msg import Motor
-from math import pi
 
 def publisher():
     freq=100 # Hz
@@ -27,9 +26,8 @@ def publisher():
             motor_msg.angle = 0
             motor_msg.address = 21
         else:
-            w_max=2*pi
-            motor_msg.wdx = 750
-            motor_msg.wsx = 750
+            motor_msg.wdx = 5000 #centi_rpm
+            motor_msg.wsx = 5000 #centi_rpm
             motor_msg.angle = 0
             motor_msg.address = 21
 

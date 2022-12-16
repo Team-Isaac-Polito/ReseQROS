@@ -6,82 +6,63 @@ from ReseQROS.msg import Motor
 
 from math import pi
 import matplotlib.pyplot as plt
+import time
 
-w_measure_left=[[]]
-w_measure_right=[[]]
+w_measure_left=[]
+w_measure_right=[]
 wsx_reference=[]
 wdx_reference=[]
-Kp,Kd,Ki=[],[],[]
+Kp,Kd,Ki=0,0,0
 flag_start=0
-n=0
 
-def plot():
-    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start, n
-    fig , axs = plt.subplots(2)
+def callback_stop(dataa):
+    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start
+
+    flag_start=0
+
+    _ , axs = plt.subplots(2)
 
     plt.suptitle('PID tuning')
 
     axs[0].plot(wsx_reference,'r',label='reference_left')
     axs[1].plot(wdx_reference,'r',label='reference_right')
 
-    for i in range(n+1):
-        w_measure_left_n=w_measure_left[i]
-        w_measure_right_n=w_measure_right[i]
+    w_measure_left=w_measure_left[:500]
+    w_measure_right=w_measure_right[:500]
 
-        colors=['k','b','m','g','y','v'] # max 6 iterartions
+    axs[0].plot(w_measure_left,'k',label=f'Kp={Kp} Kd={Kd} Ki={Ki}')
+    axs[0].legend(fontsize='small')
+    axs[1].plot(w_measure_right,'k',label=f'Kp={Kp} Kd={Kd} Ki={Ki}')
+    axs[1].legend(fontsize='small')
 
-        axs[0].plot(w_measure_left_n,colors[i],label=f'Kp={Kp[i]} Kd={Kd[i]} Ki={Ki[i]}')
-        axs[0].legend(fontsize='small')
-        axs[1].plot(w_measure_right_n,colors[i],label=f'Kp={Kp[i]} Kd={Kd[i]} Ki={Ki[i]}')
-        axs[1].legend(fontsize='small')
-
-    plt.savefig(f'./fig')
+    t=time.strftime("%Hh_%Mm_%Ss")
+    plt.savefig(f'./fig_{t}')
     #plt.show()
 
-
-def callback_stop(dataa):
-    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start, n
-
-    flag_start=0
-
-    Kp.append(input('Kd: '))
-    Kd.append(input('Kp: '))
-    Ki.append(input('Ki: '))
-    print('\n')
-    stop=input('continue? [Enter:yes /:no]')
-    print('\n')
-
-    if stop=='/':
-        plot()
-        #rospy.on_shutdown('stop_program')
-    else:       
-        n+=1
-        w_measure_left.append([])
-        w_measure_right.append([])
-
 def callback_reference(dataa):
-    global wsx_reference, wdx_reference, flag_start, n
+    global wsx_reference, wdx_reference, flag_start
+
+    #time.sleep(1)
 
     flag_start=1
     
-    if n==0:
-        value_sx=dataa.wsx/1023*65 # [rpm]
-        value_dx=dataa.wdx/1023*65
+    value_sx=dataa.wsx/100 # [rpm]
+    value_dx=dataa.wdx/100
 
-        wsx_reference.append(value_sx)
-        wdx_reference.append(value_dx)
+    wsx_reference.append(value_sx)
+    wdx_reference.append(value_dx)
 
 def callback_measure_left(dataa):
-    global w_measure_left, flag_start, n
+    global w_measure_left, flag_start
     if flag_start == 1:
-        value=dataa.data/1000
-        w_measure_left[n].append(value) # [rpm]
+        value=dataa.data/100    # [rpm]
+        w_measure_left.append(value) 
 
 def callback_measure_right(dataa):
-    global w_measure_right, flag_start, n
+    global w_measure_right, flag_start
     if flag_start == 1:
-        value=dataa.data/1000
-        w_measure_right[n].append(value) # [rpm]
+        value=dataa.data/100    # [rpm]
+        w_measure_right.append(value) 
 
 def listener():
     rospy.Subscriber("w_measure_left",Float32,callback_measure_left)
@@ -92,8 +73,15 @@ def listener():
 
 # Main function 
 def main_function():
+    global Kp,Kd,Ki
+
     rospy.init_node('listener_PID_tuning')
     rospy.loginfo("Hello! listener_PID_tuning node started!")
+    print('Inserisci i valori del PID prima di iniziare:')
+    Kp=input('Kp: ')
+    Kd=input('Kd: ')
+    Ki=input('Ki: ')
+    print('Ora puoi eseguire il publisher!')
     listener()
 
 if __name__ == '__main__':
