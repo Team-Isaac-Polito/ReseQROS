@@ -60,11 +60,9 @@ def data_csv():
         csv_writer.writerow(w_measure_right)
 
 def callback_stop(dataa):
-
     plot()
     data_csv()
     
-
 def callback_reference(dataa):
     global wsx_reference, wdx_reference, flag_start
 
@@ -97,6 +95,17 @@ def listener():
     rospy.Subscriber("flag",UInt16,callback_stop)
     rospy.spin()
 
+def publisher_K_PID():
+    global Kp,Kd,Ki
+
+    pub_Kp=rospy.Publisher("Kp_PID",Float32,queue_size=10)
+    pub_Kd=rospy.Publisher("Kd_PID",Float32,queue_size=10)
+    pub_Ki=rospy.Publisher("Ki_PID",Float32,queue_size=10)
+
+    pub_Kp.publish(Kp)
+    pub_Kd.publish(Kd)
+    pub_Ki.publish(Ki)
+
 # Main function 
 def main_function():
     global Kp,Kd,Ki
@@ -108,6 +117,7 @@ def main_function():
     Kd=input('Kd: ')
     Ki=input('Ki: ')
     print('Ora puoi eseguire il publisher!')
+    publisher_K_PID()
     listener()
 
 if __name__ == '__main__':
