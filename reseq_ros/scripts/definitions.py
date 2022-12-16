@@ -16,3 +16,7 @@ SEND_TEMPERATURE =             0x0F
 DATA_EE_PITCH =                0x0B
 DATA_EE_PITCH2 =               0x0D
 DATA_EE_ROLL =                 0x0C
+
+DATA_PID_KP =                  0x10
+DATA_PID_KI =                  0x11
+DATA_PID_KD =                  0x12
