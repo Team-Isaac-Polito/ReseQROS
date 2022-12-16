@@ -3,7 +3,7 @@
 import rospy
 
 from std_msgs.msg import UInt16
-from ReseQROS.msg import Motor
+from reseq_ros.msg import Motor
 
 from agevar_constant import *
 from agevar_check import *

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from ReseQROS.msg import Motor
+from reseq_ros.msg import Motor
 from std_msgs.msg import UInt16
 from geometry_msgs.msg import Twist
 

@@ -6,7 +6,7 @@ import os
 import time
 import rospy
 import socket
-from ReseQROS.msg import Motor
+from reseq_ros.msg import Motor
 from std_msgs.msg import UInt16
 
 HOST = '1.2.3.4'

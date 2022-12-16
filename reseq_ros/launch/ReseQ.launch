@@ -6,7 +6,7 @@
 		<param name="baud"              type="int"                  value="57600"/>
 	</node>-->
 	
-	<node name="movementTest" pkg="ReseQROS" type="movementTest.py" output="screen"/>
-	<node name="communication" pkg="ReseQROS" type="communication.py" output="screen"/>
+	<node name="movementTest" pkg="reseq_ros" type="movementTest.py" output="screen"/>
+	<node name="communication" pkg="reseq_ros" type="communication.py" output="screen"/>
 
 </launch>

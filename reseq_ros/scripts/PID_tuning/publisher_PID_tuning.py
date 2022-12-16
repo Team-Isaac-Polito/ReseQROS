@@ -2,7 +2,7 @@
 
 import rospy
 from std_msgs.msg import UInt16
-from ReseQROS.msg import Motor
+from reseq_ros.msg import Motor
 
 def publisher():
     freq=100 # Hz

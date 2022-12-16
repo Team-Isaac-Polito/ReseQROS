@@ -2,7 +2,7 @@
 
 import rospy
 from std_msgs.msg import UInt16, Float32
-from ReseQROS.msg import Motor
+from reseq_ros.msg import Motor
 
 from math import pi
 import matplotlib.pyplot as plt

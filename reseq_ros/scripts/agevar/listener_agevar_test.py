@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from ReseQROS.msg import Topic_ref
+from reseq_ros.msg import Topic_ref
 from std_msgs.msg import UInt16, Float32
 
 import matplotlib.pyplot as plt
