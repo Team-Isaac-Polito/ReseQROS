@@ -9,8 +9,8 @@ def list(data):
     v = data.linear.y
     w = data.linear.x
 
-    vel =  ((512 - abs(w)) * (v / 512) + v)
-    curv = ((512 - abs(v)) * (w / 512) + w)
+    vel =  -((512 - abs(w)) * (v / 512) + v)
+    curv = -((512 - abs(v)) * (w / 512) + w)
 
     #angolo
     angle = curv * 30 / 512 # da -512/0/512 a -30/0/30

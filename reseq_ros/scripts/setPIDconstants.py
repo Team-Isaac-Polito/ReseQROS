@@ -5,10 +5,8 @@ import can
 import sys
 import struct
 
-addr = 0x15
-
 canbus = can.interface.Bus(channel='can1', bustype='socketcan')
-kp,ki,kd = sys.argv[1:]
+addr,kp,ki,kd = sys.argv[1:]
 
 data = list(struct.pack('f', float(kp)))
 msg = can.Message(arbitration_id=int(addr),data=[definitions.DATA_PID_KP]+data,is_extended_id=False)

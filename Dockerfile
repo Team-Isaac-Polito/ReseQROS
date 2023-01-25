@@ -1,7 +1,8 @@
 FROM dustynv/ros:noetic-ros-base-l4t-r35.1.0
 
-RUN apt-get update && apt-get install -y build-essential python3-can \
+RUN apt-get update && apt-get install -y python3-pip build-essential python3-can \
     && rm -rf /var/likb/apt/lists/*
+RUN pip3 install matplotlib
 
 RUN mkdir -p /catkin_ws/src/
 WORKDIR /catkin_ws

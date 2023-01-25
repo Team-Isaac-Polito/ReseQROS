@@ -22,6 +22,9 @@ def interval(data):
 	return data if 0 <= data <= 1023 else 1023 if data > 1023 else 0 
 
 def motor_list(dataa):
+	dataa.wsx = dataa.wsx*-10
+	dataa.wdx = dataa.wdx*-10
+
 	out = int(dataa.wsx).to_bytes(2, byteorder='little', signed=True)
 	msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
 	canbus.send(msg)
