@@ -14,11 +14,14 @@ w_measure_left=[]
 w_measure_right=[]
 wsx_reference=[]
 wdx_reference=[]
-Kp,Kd,Ki=0,0,0
 flag_start=0
 
 def plot():
-    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, Kp, Kd, Ki, flag_start
+    global w_measure_left, w_measure_right, wsx_reference, wdx_reference, flag_start
+
+    Kp = 0.25
+    Ki = 5
+    Kd = 0
 
     flag_start=0
 
@@ -95,17 +98,6 @@ def listener():
     rospy.Subscriber("motor_topic",Motor,callback_reference)
     rospy.Subscriber("flag",UInt16,callback_stop)
 
-def publisher_K_PID():
-    global Kp,Kd,Ki
-
-    pub_Kp=rospy.Publisher("Kp_PID",Float32,queue_size=10)
-    pub_Kd=rospy.Publisher("Kd_PID",Float32,queue_size=10)
-    pub_Ki=rospy.Publisher("Ki_PID",Float32,queue_size=10)
-
-    pub_Kp.publish(Kp)
-    pub_Kd.publish(Kd)
-    pub_Ki.publish(Ki)
-
 def publisher():
     freq=100 # Hz
     Ts=1/freq
@@ -122,7 +114,7 @@ def publisher():
 
     while not rospy.is_shutdown() and t<T_tuning:
 
-        if 1<t<1.1:
+        if 1<t<4:
             motor_msg.wdx = 5000 #centi_rpm
             motor_msg.wsx = 5000 #centi_rpm
             motor_msg.angle = 0
@@ -153,29 +145,10 @@ def main_function():
 
     rospy.init_node('PID_tuning')
     rospy.loginfo("Hello! PID_tuning node started!")
-    print('Inserisci i valori del PID prima di iniziare:')
-    Kp=input('Kp: ')
-    Kd=input('Kd: ')
-    Ki=input('Ki: ')
-    addr = 0x15
 
-    canbus = can.interface.Bus(channel='can1', bustype='socketcan')
-    data = list(struct.pack('f', float(Kp)))
-    msg = can.Message(arbitration_id=int(addr),data=[definitions.DATA_PID_KP]+data,is_extended_id=False)
-    canbus.send(msg)
-
-    data = list(struct.pack('f', float(Ki)))
-    msg = can.Message(arbitration_id=int(addr),data=[definitions.DATA_PID_KI]+data,is_extended_id=False)
-    canbus.send(msg)
-
-    data = list(struct.pack('f', float(Kd)))
-    msg = can.Message(arbitration_id=int(addr),data=[definitions.DATA_PID_KD]+data,is_extended_id=False)
-    canbus.send(msg)
-
-
-    publisher_K_PID()
     listener()
     publisher()
+    
     rospy.spin()
 
 if __name__ == '__main__':
