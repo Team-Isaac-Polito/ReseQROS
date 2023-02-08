@@ -28,6 +28,9 @@ graph=1
 def check_sim(num_module,lin_vel,ang_vel):
     global x0,dx0,y0,dy0,theta0,x1,dx1,y1,dy1,theta1,x2,dx2,y2,dy2,theta2,graph
 
+    N_plot=20
+    envelope=True
+
     if num_module==0:
         x0.append(x0[-1]+lin_vel*cos(theta0[-1])*Ts)
         dx0.append(cos(theta0[-1]))

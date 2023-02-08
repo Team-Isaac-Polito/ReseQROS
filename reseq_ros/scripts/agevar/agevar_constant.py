@@ -18,8 +18,3 @@ r_curv_max = 10*r_curv_min      # [m]     maximum radius of curvature
 freq = 50        # [Hz] Transmission rate of the remote controller
 Ts = 1/freq      # [s] Sampling time of the data acquired from the remote controller
 address = [ 21, 22, 23 ] # 0x15, 0x16, 0x17
-
-# PLOT PARAMETERS
-t_sim=60
-N_plot=20
-envelope=True
