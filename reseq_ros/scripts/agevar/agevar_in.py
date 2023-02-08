@@ -11,10 +11,6 @@ INPUT PROCESSING:
 Filter + Input scaling + Direction of motion + Angular velocity 
 '''
 
-"""global variables"""
-lin_vel = 512
-r_curv = 512
-
 """subfunctions of agevar_in"""
 
 # Filters the vibration around the resting position
@@ -64,6 +60,7 @@ def r_curv2ang(lin_vel,r_curv):
 
 
 """ --------------------------- """
+
 
 # Callback function
 def callback(dataa):
