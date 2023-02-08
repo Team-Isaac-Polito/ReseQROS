@@ -6,7 +6,10 @@ DATA_PITCH =                   0x04
 
 SEND_STATUS =                  0x05                
 SEND_IMU_DATA =                0x06
-SEND_YAW_ENCODER =             0x07    
+
+SEND_YAW_ENCODER_MIDDLE =      0x07    
+SEND_YAW_ENCODER_TAIL =        0x13
+
 SEND_TRACTION_LEFT_SPEED =     0x08 
 SEND_TRACTION_RIGHT_SPEED =    0x09            
 SEND_BATTERY_VOLTAGE =         0x0A
