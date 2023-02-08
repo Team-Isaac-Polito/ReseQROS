@@ -31,13 +31,13 @@ def list(data):
     motor_msg.angle = angle
     motor_msg.address = 22
     print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
-    #pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
+    pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
     motor_msg.wdx = int((vel - curv/4) if vel <= 0 else (vel + curv))
     motor_msg.wsx = int((vel + curv/4) if vel <= 0 else (vel - curv))
     motor_msg.address = 23
     print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
-    #pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
+    pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
 if __name__ == '__main__':
     try:
