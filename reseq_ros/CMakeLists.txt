@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    Motor.msg
    Real_input.msg
+   Real_output.msg
  )
 
 ## Generate added messages and services with any dependencies listed here
