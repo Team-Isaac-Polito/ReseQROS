@@ -103,11 +103,16 @@ def recv_data(mess):
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
 		msg.data = float(val[0])
 		tracRightPub.publish(msg)
-	elif mess.data[0] == definitions.SEND_YAW_ENCODER:
+	elif mess.data[0] == definitions.SEND_YAW_ENCODER_MIDDLE:
 		msg = Float32()
-		val = struct.unpack('f',bytearray([mess.data[1],mess.data[2],mess.data[3],mess.data[4]]))
+		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
 		msg.data = float(val[0])
-		yawAnglePub.publish(msg)
+		yawAngleMiddlePub.publish(msg)	
+	elif mess.data[0] == definitions.SEND_YAW_ENCODER_TAIL:
+		msg = Float32()
+		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
+		msg.data = float(val[0])
+		yawAngleTailPub.publish(msg)
 
 if __name__ == '__main__':
 	try:
@@ -125,7 +130,8 @@ if __name__ == '__main__':
 		currRightPub=rospy.Publisher("current_right_topic",UInt16,queue_size=10)
 		tracLeftPub=rospy.Publisher("w_measure_left",Float32,queue_size=10)
 		tracRightPub=rospy.Publisher("w_measure_right",Float32,queue_size=10)
-		yawAnglePub=rospy.Publisher("yaw_angle",Float32,queue_size=10)
+		yawAngleMiddlePub=rospy.Publisher("yaw_angle_middle",Float32,queue_size=10)
+		yawAngleTailPub=rospy.Publisher("yaw_angle_tail",Float32,queue_size=10)
 		
 		listener = can.Listener()
 		listener.on_message_received = recv_data
