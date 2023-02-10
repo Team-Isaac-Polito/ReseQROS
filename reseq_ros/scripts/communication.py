@@ -93,6 +93,7 @@ def recv_data(mess):
 		val = struct.unpack('f',bytearray([mess.data[1],mess.data[2],mess.data[3],mess.data[4]]))
 		msg.data = val
 		tempPub.publish(msg)
+		
 	elif mess.data[0] == definitions.SEND_TRACTION_LEFT_SPEED_HEAD:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
@@ -154,12 +155,16 @@ if __name__ == '__main__':
 		tempPub=rospy.Publisher("temperature_topic",Float32,queue_size=10)
 		currLeftPub=rospy.Publisher("current_left_topic",UInt16,queue_size=10)
 		currRightPub=rospy.Publisher("current_right_topic",UInt16,queue_size=10)
-		tracLeftHeadPub=rospy.Publisher("w_measure_left",Float32,queue_size=10)
+
+		tracLeftHeadPub=rospy.Publisher("w_measure_head_left",Float32,queue_size=10)
 		tracRightHeadPub=rospy.Publisher("w_measure_head_right",Float32,queue_size=10)
-		tracLeftMiddlePub=rospy.Publisher("w_measure_head_left",Float32,queue_size=10)
+
+		tracLeftMiddlePub=rospy.Publisher("w_measure_middle_left",Float32,queue_size=10)
 		tracRightMiddlePub=rospy.Publisher("w_measure_middle_right",Float32,queue_size=10)
+
 		tracLeftTailPub=rospy.Publisher("w_measure_tail_left",Float32,queue_size=10)
 		tracRightTailPub=rospy.Publisher("w_measure_tail_right",Float32,queue_size=10)
+
 		yawAngleMiddlePub=rospy.Publisher("yaw_angle_middle",Float32,queue_size=10)
 		yawAngleTailPub=rospy.Publisher("yaw_angle_tail",Float32,queue_size=10)
 		
