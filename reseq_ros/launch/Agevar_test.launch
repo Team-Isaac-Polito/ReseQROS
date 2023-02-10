@@ -11,11 +11,12 @@
 	<node name="agevar_in" pkg="reseq_ros" type="agevar_in.py" output="screen"/>
 	<node name="agevar_core" pkg="reseq_ros" type="agevar_core.py" output="screen"/>
 	<node name="agevar_out" pkg="reseq_ros" type="agevar_out.py" output="screen"/>
-	<node name="plot_test" pkg="reseq_ros" type="plot_test.py" output="screen"/>
+	
 	<node name="remote_test" pkg="reseq_ros" type="remote_test.py" output="screen"/>
 
+	<node name="plot_test" pkg="reseq_ros" type="plot_test.py" output="screen"/>
+
 	<!--
-	
 	
 	<node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
 	

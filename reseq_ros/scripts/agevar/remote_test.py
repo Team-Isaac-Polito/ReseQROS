@@ -12,7 +12,7 @@ def publisher():
     rate=rospy.Rate(freq)
 
     t=0
-    t_sim=6
+    t_sim=1000
     t_step=1
 
     while not rospy.is_shutdown() :
