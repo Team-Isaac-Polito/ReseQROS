@@ -15,22 +15,74 @@ w_measure_right = []
 w_measure_left = [],
 yaw_angle = []
 
+real_motor_1_wdx = []
+real_motor_1_wsx = []
+real_motor_1_angle = []
+
+real_motor_2_wdx = []
+real_motor_2_wsx = []
+real_motor_2_angle = []
+
 def plot():
     global w_measure_right, real_motor_0_wdx, w_measure_left, real_motor_0_wsx, yaw_angle, real_motor_0_angle
+    global w_measure_right, real_motor_1_wdx, w_measure_left, real_motor_1_wsx, yaw_angle, real_motor_1_angle
+    global w_measure_right, real_motor_2_wdx, w_measure_left, real_motor_2_wsx, yaw_angle, real_motor_2_angle
 
     fig, axs = plt.subplots(3,1,sharex=True)
 
-    # axs[0].plot(w_measure_right)
-    axs[0].plot(real_motor_0_wdx)
-    axs[0].set_ylabel('motor_0_wdx')
+    fig.suptitle("Motor 0")
 
-    # axs[1].plot(w_measure_left)
-    axs[1].plot(real_motor_0_wsx)
-    axs[1].set_ylabel('motor_0_wsx')
+    # axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_0_wdx,label='reference')
+    axs[0].set_ylabel('wdx')
 
-    # axs[2].plot(yaw_angle)
-    axs[2].plot(real_motor_0_angle)
-    axs[2].set_ylabel('motor_0_angle')
+    # axs[1].plot(w_measure_left,label='measure')
+    axs[1].plot(real_motor_0_wsx,label='reference')
+    axs[1].set_ylabel('wsx')
+
+    # axs[2].plot(yaw_angle,label='measure')
+    axs[2].plot(real_motor_0_angle,label='reference')
+    axs[2].set_ylabel('angle')
+
+    plt.show()
+
+    ''' ---------------- '''
+
+    fig, axs = plt.subplots(3,1,sharex=True)
+
+    fig.suptitle("Motor 1")
+
+    # axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_1_wdx,label='reference')
+    axs[0].set_ylabel('wdx')
+
+    # axs[1].plot(w_measure_left,label='measure')
+    axs[1].plot(real_motor_1_wsx,label='reference')
+    axs[1].set_ylabel('wsx')
+
+    # axs[2].plot(yaw_angle,label='measure')
+    axs[2].plot(real_motor_1_angle,label='reference')
+    axs[2].set_ylabel('angle')
+
+    plt.show()
+
+    ''' ---------------- '''
+
+    fig, axs = plt.subplots(3,1,sharex=True)
+
+    fig.suptitle("Motor 2")
+
+    # axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_2_wdx,label='reference')
+    axs[0].set_ylabel('wdx')
+
+    # axs[1].plot(w_measure_left,label='measure')
+    axs[1].plot(real_motor_2_wsx,label='reference')
+    axs[1].set_ylabel('wsx')
+
+    # axs[2].plot(yaw_angle,label='measure')
+    axs[2].plot(real_motor_2_angle,label='reference')
+    axs[2].set_ylabel('angle')
 
     plt.show()
 
@@ -49,6 +101,8 @@ def listener():
     rospy.Subscriber('yaw_angle',Float32,callback_Float32,'yaw_angle')
 
     rospy.Subscriber('real_motor_0',Real_motor,callback_Real_motor,'real_motor_0')
+    rospy.Subscriber('real_motor_1',Real_motor,callback_Real_motor,'real_motor_1')
+    rospy.Subscriber('real_motor_2',Real_motor,callback_Real_motor,'real_motor_2')
 
     sleep(5)
     plot()
