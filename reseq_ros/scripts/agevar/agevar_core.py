@@ -28,7 +28,7 @@ def callback(dataa):
     sign = dataa.sign
 
     # definition of ROS publishers
-    pub = [rospy.Publisher("Real_output_module_"+str(i),Real_output,queue_size=10) for i in range(N_mod)]
+    pub = [rospy.Publisher("real_output_"+str(i),Real_output,queue_size=10) for i in range(N_mod)]
     Real_output_msg = Real_output()
 
     # module vector
@@ -55,7 +55,7 @@ def callback(dataa):
 # Receives the values of feed speed and curve radius of the first module from the remote controller
 # on the topic Real_input every time new values are available and it uses them to run the callback
 def listener():
-    rospy.Subscriber("Real_input",Real_input,callback)
+    rospy.Subscriber("real_input",Real_input,callback)
     rospy.spin()
 
 # Main function 

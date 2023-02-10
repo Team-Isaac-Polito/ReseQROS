@@ -72,7 +72,7 @@ def callback(dataa):
     lin_vel,r_curv,sign = direction(lin_vel,r_curv)
     ang_vel=r_curv2ang(lin_vel,r_curv)
 
-    pub = rospy.Publisher("Real_input",Real_input,queue_size=10)
+    pub = rospy.Publisher("real_input",Real_input,queue_size=10)
     Real_input_msg = Real_input()
     Real_input_msg.lin_vel = lin_vel
     Real_input_msg.r_curv = r_curv

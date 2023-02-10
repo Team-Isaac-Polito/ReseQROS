@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from reseq_ros.msg import Real_output
-from reseq_ros.msg import Motor
+from reseq_ros.msg import Real_output, Motor, Real_motor
 
 from agevar_constant import *
 from math import degrees
@@ -64,21 +63,30 @@ def callback(dataa):
     ang_vel = dataa.ang_vel
     angle = dataa.delta
 
+    pub_rmt = [rospy.Publisher("real_motor_"+str(i),Real_motor,queue_size=10) for i in range(N_mod)]
+    pub_mt = rospy.Publisher("motor",Motor,queue_size=10)
+
+    real_motor_msg = Real_motor()
+    motor_msg = Motor()
+
     wdx, wsx = vel_motors(lin_vel,ang_vel)
     wdx, wsx, angle = saturation(wdx,wsx,angle)
-    wdx, wsx = out_scaling(wdx,wsx)
 
     if sign == 0:  # backward
         wsx, wdx = -wsx,-wdx
 
-    pub = rospy.Publisher("motor_topic",Motor,queue_size=10)
-    motor_msg = Motor()
+    real_motor_msg.wdx = wdx
+    real_motor_msg.wsx = wsx
+    real_motor_msg.angle = angle
+    pub_rmt[num_module].publish(real_motor_msg)
+
+    wdx, wsx = out_scaling(wdx,wsx)
 
     motor_msg.wdx = wdx
     motor_msg.wsx = wsx
     motor_msg.angle = angle
     motor_msg.address = address[num_module]
-    pub.publish(motor_msg) # send the values of wdx,wsx,angle on the topic "motor_topic"
+    pub_mt.publish(motor_msg) # send the values of wdx,wsx,angle on the topic "motor_topic"
 
 if __name__ == '__main__':
     try:
@@ -86,7 +94,7 @@ if __name__ == '__main__':
         rospy.loginfo("Hello! agevar_out node started!") 
         
         for i in range(N_mod):
-            rospy.Subscriber("Real_output_module_"+str(i),Real_output,callback)
+            rospy.Subscriber("real_output_"+str(i),Real_output,callback)
 
         rospy.spin()
     except rospy.ROSInterruptException:
