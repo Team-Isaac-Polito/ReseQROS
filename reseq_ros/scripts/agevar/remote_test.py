@@ -13,7 +13,7 @@ def publisher():
 
     t=0
     t_sim=6
-    t_step=t_sim/2
+    t_step=1
 
     while not rospy.is_shutdown() :
 
@@ -26,12 +26,12 @@ def publisher():
         if t<=t_step:
             print('dritto')
             #lin_vel=512-int(512/t_step*2*t) # linear acceleration
-            lin_vel=0 # constant velocity
-            r_curv=512
+            lin_vel=-512 # constant velocity
+            r_curv=0
         elif t_step<t<t_sim:
-            # print('curva 2')
-            lin_vel=0
-            r_curv=0            
+            print('curva')
+            lin_vel=-512
+            r_curv=512            
 
         twist_msg.linear.y = lin_vel
         twist_msg.linear.x = r_curv

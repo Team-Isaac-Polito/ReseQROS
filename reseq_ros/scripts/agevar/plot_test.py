@@ -28,61 +28,51 @@ def plot():
     global w_measure_right, real_motor_1_wdx, w_measure_left, real_motor_1_wsx, yaw_angle, real_motor_1_angle
     global w_measure_right, real_motor_2_wdx, w_measure_left, real_motor_2_wsx, yaw_angle, real_motor_2_angle
 
-    fig, axs = plt.subplots(3,1,sharex=True)
+    fig, axs = plt.subplots(2,1,sharex=True)
 
     fig.suptitle("Motor 0")
 
-    # axs[0].plot(w_measure_right,label='measure')
-    axs[0].plot(real_motor_0_wdx,label='reference')
+    #axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_0_wdx,label='wdx')
+    axs[0].plot(real_motor_0_wsx,label='wsx')
     axs[0].set_ylabel('wdx')
+    axs[0].set_ylabel('w')
 
-    # axs[1].plot(w_measure_left,label='measure')
-    axs[1].plot(real_motor_0_wsx,label='reference')
-    axs[1].set_ylabel('wsx')
-
-    # axs[2].plot(yaw_angle,label='measure')
-    axs[2].plot(real_motor_0_angle,label='reference')
-    axs[2].set_ylabel('angle')
-
-    plt.show()
+    #axs[2].plot(yaw_angle,label='measure')
+    axs[1].plot(real_motor_0_angle,label='angle')
+    axs[1].set_ylabel('angle')
 
     ''' ---------------- '''
 
-    fig, axs = plt.subplots(3,1,sharex=True)
+    fig, axs = plt.subplots(2,1,sharex=True)
 
     fig.suptitle("Motor 1")
 
-    # axs[0].plot(w_measure_right,label='measure')
-    axs[0].plot(real_motor_1_wdx,label='reference')
+    #axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_1_wdx,label='wdx')
+    axs[0].plot(real_motor_1_wsx,label='wsx')
     axs[0].set_ylabel('wdx')
+    axs[0].set_ylabel('w')
 
-    # axs[1].plot(w_measure_left,label='measure')
-    axs[1].plot(real_motor_1_wsx,label='reference')
-    axs[1].set_ylabel('wsx')
-
-    # axs[2].plot(yaw_angle,label='measure')
-    axs[2].plot(real_motor_1_angle,label='reference')
-    axs[2].set_ylabel('angle')
-
-    plt.show()
+    #axs[2].plot(yaw_angle,label='measure')
+    axs[1].plot(real_motor_1_angle,label='angle')
+    axs[1].set_ylabel('angle')
 
     ''' ---------------- '''
 
-    fig, axs = plt.subplots(3,1,sharex=True)
+    fig, axs = plt.subplots(2,1,sharex=True)
 
     fig.suptitle("Motor 2")
 
-    # axs[0].plot(w_measure_right,label='measure')
-    axs[0].plot(real_motor_2_wdx,label='reference')
+    #axs[0].plot(w_measure_right,label='measure')
+    axs[0].plot(real_motor_2_wdx,label='wdx')
+    axs[0].plot(real_motor_2_wsx,label='wsx')
     axs[0].set_ylabel('wdx')
+    axs[0].set_ylabel('w')
 
-    # axs[1].plot(w_measure_left,label='measure')
-    axs[1].plot(real_motor_2_wsx,label='reference')
-    axs[1].set_ylabel('wsx')
-
-    # axs[2].plot(yaw_angle,label='measure')
-    axs[2].plot(real_motor_2_angle,label='reference')
-    axs[2].set_ylabel('angle')
+    #axs[2].plot(yaw_angle,label='measure')
+    axs[1].plot(real_motor_2_angle,label='angle')
+    axs[1].set_ylabel('angle')
 
     plt.show()
 

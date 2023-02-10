@@ -32,10 +32,10 @@ def callback(dataa):
     Real_output_msg = Real_output()
 
     # module vector
-    if sign==1:
-        module_vector= list(range(N_mod)) # forward
-    else:
-        module_vector= list(range(N_mod)).reverse() # backward
+    module_vector= list(range(N_mod))
+
+    if sign==0:
+        module_vector.reverse() # backward
 
     # for every module...
     for num_module in module_vector:

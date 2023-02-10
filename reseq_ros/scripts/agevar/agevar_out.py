@@ -64,9 +64,9 @@ def callback(dataa):
     angle = dataa.delta
 
     pub_rmt = [rospy.Publisher("real_motor_"+str(i),Real_motor,queue_size=10) for i in range(N_mod)]
-    pub_mt = rospy.Publisher("motor",Motor,queue_size=10)
-
     real_motor_msg = Real_motor()
+    
+    pub_mt = rospy.Publisher("motor_topic",Motor,queue_size=10)
     motor_msg = Motor()
 
     wdx, wsx = vel_motors(lin_vel,ang_vel)

@@ -15,18 +15,16 @@ Filter + Input scaling + Direction of motion + Angular velocity
 
 # Filters the vibration around the resting position
 def filter(lin_vel,r_curv):
-    lin_vel = 512 if 462 < lin_vel < 562 else lin_vel
-    r_curv = 512 if 462 < r_curv < 562 else r_curv
+    lin_vel = 0 if -50 < lin_vel < 50 else lin_vel
+    r_curv = 0 if -50 < r_curv < 50 else r_curv
     return lin_vel, r_curv
 
 # Scales the inputs from topic "twist_joystick" from 0/1023 to their real values
 def in_scaling(lin_vel,r_curv):
     # lin_vel:
-    lin_vel = -(lin_vel-512) # from 0/1023 to 512/-511
     lin_vel = (lin_vel/512)*lin_vel_max # from -512/511 to -lin_vel_max/lin_vel_max
 
     # r_curv:
-    r_curv = -(r_curv-512) # from 0/1023 to 512/-512
     if r_curv >= 0:
         r_curv = r_curv_max-(r_curv_max-r_curv_min)*r_curv/512 # from 0/511 to r_curv_max/r_curv_min
     else:
