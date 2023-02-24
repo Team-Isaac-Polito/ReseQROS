@@ -19,7 +19,7 @@ COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
 RUN echo 'source /catkin_ws/devel/setup.bash' >> /root/.bashrc
 
-CMD /bin/bash -c '. /root/.bashrc; roslaunch ReseQROS ReseQ.launch'
-CMD bash
+CMD /bin/bash -c '. /root/.bashrc'
+CMD roslaunch reseq_ros ReseQ.launch
 
 WORKDIR /
