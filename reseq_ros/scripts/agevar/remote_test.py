@@ -12,16 +12,10 @@ def publisher():
     rate=rospy.Rate(freq)
 
     t=0
-    t_sim=1000
-    t_step=1
+    t_step=2
+    t_sim=6
 
-    while not rospy.is_shutdown() :
-
-        if t >= t_sim:
-            print('fermo')
-            lin_vel=512 # rest
-            r_curv=512
-            break      
+    while not rospy.is_shutdown() :                 
 
         if t<=t_step:
             print('dritto')
@@ -31,7 +25,12 @@ def publisher():
         elif t_step<t<t_sim:
             print('curva')
             lin_vel=-512
-            r_curv=512            
+            r_curv=512    
+        else:
+            print('fermo')
+            lin_vel=512 # rest
+            r_curv=512
+            break         
 
         twist_msg.linear.y = lin_vel
         twist_msg.linear.x = r_curv
