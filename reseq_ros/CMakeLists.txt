@@ -20,10 +20,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
 )
 
-catkin_package(
-  CATKIN_DEPENDS message_runtime
-)
+ament_export_dependencies(rosidl_default_runtime)
 
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+ament_package()
