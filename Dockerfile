@@ -7,15 +7,12 @@ RUN pip3 install matplotlib
 RUN mkdir -p /ros2_ws/src/
 WORKDIR /ros2_ws
 
-COPY reseq_ros/CMakeLists.txt src/
-COPY reseq_ros/package.xml src/
-COPY reseq_ros/msg src/msg
+COPY reseq_msgs src/reseq_msgs
 
 RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/install/setup.bash; colcon build'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
-COPY reseq_ros/launch src/launch
-COPY reseq_ros/scripts src/scripts
+COPY reseq_ros src/reseq_ros
 
 CMD roslaunch reseq_ros ReseQ.launch
