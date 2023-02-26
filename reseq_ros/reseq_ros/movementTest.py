@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import rospy
-from reseq_ros.msg import Motor
+import rclpy
+from reseq_msgs.msg import Motor
 from std_msgs.msg import UInt16
 from geometry_msgs.msg import Twist
 
@@ -39,14 +39,16 @@ def list(data):
     print("IND "+ str(motor_msg.address) + " dx " + str(motor_msg.wdx) + " sx " + str(motor_msg.wsx))
     pub.publish(motor_msg) # ... tramette i valori wdx,wsx,angle sul topic "motor_topic"
 
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = rclpy.create_node('agevar') #inizializza il nodo "agevar"
+    node.get_logger().info("Hello! agevar node started!")
+
+    sub = node.create_subscription(Twist,"twist_joystick",list,10)
+
+    rclpy.spin(node)
+
+
 if __name__ == '__main__':
-    try:
-        rospy.init_node('agevar') #inizializza il nodo "agevar"
-        rospy.loginfo("Hello! agevar node started!")
-
-        rospy.Subscriber("twist_joystick",Twist,list)
-
-        rospy.spin()
-    except rospy.ROSInterruptException:
-        pass
-
+    main()

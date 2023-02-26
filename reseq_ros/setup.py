@@ -19,6 +19,7 @@ setup(
     license='aVeryGoodLicense!',
     entry_points={
         'console_scripts': [
+            'movementTest = reseq_ros.movementTest:main',
         ],
     },
 )
