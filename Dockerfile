@@ -11,7 +11,7 @@ COPY reseq_ros/CMakeLists.txt src/
 COPY reseq_ros/package.xml src/
 COPY reseq_ros/msg src/msg
 
-RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; colcon build'
+RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/install/setup.bash; colcon build'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
