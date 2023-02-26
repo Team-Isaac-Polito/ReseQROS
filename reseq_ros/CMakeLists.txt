@@ -9,19 +9,16 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   Motor.msg
-   Real_input.msg
-   Real_motor.msg
-   Real_output.msg
- )
+set(msg_files
+   "msg/Motor.msg"
+   "msg/RealInput.msg"
+   "msg/RealMotor.msg"
+   "msg/RealOutput.msg"
+)
 
-## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+)
 
 catkin_package(
   CATKIN_DEPENDS message_runtime

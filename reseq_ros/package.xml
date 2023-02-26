@@ -43,8 +43,9 @@
   <exec_depend>std_msgs</exec_depend>
   
   <!-- AG -->
-  <build_depend>message_generation</build_depend>
-  <exec_depend>message_runtime</exec_depend>
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
