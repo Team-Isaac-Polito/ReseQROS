@@ -4,8 +4,8 @@ RUN apt-get update && apt-get install -y python3-pip build-essential python3-can
     && rm -rf /var/likb/apt/lists/*
 RUN pip3 install matplotlib
 
-RUN mkdir -p /catkin_ws/src/
-WORKDIR /catkin_ws
+RUN mkdir -p /ros2_ws/src/
+WORKDIR /ros2_ws
 
 COPY reseq_ros/CMakeLists.txt src/
 COPY reseq_ros/package.xml src/

@@ -4,7 +4,7 @@ set -e
 ros_env_setup="/opt/ros/$ROS_DISTRO/setup.bash"
 echo "sourcing   $ros_env_setup"
 source "$ros_env_setup"
-ros_env_setup="/catkin_ws/devel/setup.bash"
+ros_env_setup="/ros2_ws/devel/setup.bash"
 echo "sourcing   $ros_env_setup"
 source "$ros_env_setup"
 
