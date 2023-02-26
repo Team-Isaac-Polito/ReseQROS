@@ -6,12 +6,12 @@ RUN pip3 install matplotlib
 
 RUN mkdir -p /catkin_ws/src/
 WORKDIR /catkin_ws
-COPY ./reseq_ros /catkin_ws/src/
 
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; source devel/setup.bash'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
+COPY ./reseq_ros /catkin_ws/src/
 
 CMD roslaunch reseq_ros ReseQ.launch
