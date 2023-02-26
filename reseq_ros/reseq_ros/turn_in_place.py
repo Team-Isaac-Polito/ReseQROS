@@ -1,49 +1,49 @@
 #!/usr/bin/env python3
 
-import rospy
-from reseq_ros.msg import Motor
+import rclpy
+from rclpy.node import Node
+from reseq_msgs.msg import Motor
 
-def publisher():
-    pub=rospy.Publisher("motor_topic",Motor,queue_size=10)
-    motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
 
-    rate = rospy.Rate(50)
+class Turn_In_Place(Node):
 
-    while not rospy.is_shutdown():
-
+    def __init__(self):
+        super().__init__('turn_in_place')
+        self.publisher_ = self.create_publisher(Motor,"motor_topic",10)
+        self.get_logger().info("Hello! turn_in_place node started!")
+        timer_freq = 50 # hertz
+        self.timer = self.create_timer(1/timer_freq, self.node_callback)
+        
+    def node_callback(self):
+        motor_msg=Motor() #Motor.msg={wdx,wsx,angle}
         vel = 500
-
+        
         motor_msg.wdx = -vel
         motor_msg.wsx = -vel
-        motor_msg.angle = 0
+        motor_msg.angle = 0.0
         motor_msg.address = 21 # head
-
-        pub.publish(motor_msg)
+        self.publisher_.publish(motor_msg)
 
         motor_msg.wdx = vel
         motor_msg.wsx = -vel
-        motor_msg.angle = 0
+        motor_msg.angle = 0.0
         motor_msg.address = 22 # middle
-
-        pub.publish(motor_msg)
+        self.publisher_.publish(motor_msg)
 
         motor_msg.wdx = vel
         motor_msg.wsx = vel
-        motor_msg.angle = 0
+        motor_msg.angle = 0.0
         motor_msg.address = 23 # tail
+        self.publisher_.publish(motor_msg)
 
-        pub.publish(motor_msg)
 
-        rate.sleep()      
+def main(args=None):
+    rclpy.init(args=args)
+    
+    turn_in_place = Turn_In_Place()
+    
+    rclpy.spin(turn_in_place)
+
 
 if __name__ == '__main__':
-    try:
-        rospy.init_node('turn_in_place')
-        rospy.loginfo("Hello! turn_in_place node started!")
-
-        publisher()
-
-        #rospy.Subscriber("",,)
-
-    except rospy.ROSInterruptException:
-        pass
+    main()
