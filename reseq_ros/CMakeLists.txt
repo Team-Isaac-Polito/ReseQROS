@@ -3,11 +3,10 @@ project(reseq_ros)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  std_msgs
-  message_generation
-)
+find_package(ament_cmake REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 ## Generate messages in the 'msg' folder
  add_message_files(
