@@ -6,7 +6,6 @@ RUN pip3 install matplotlib
 
 RUN mkdir -p /catkin_ws/src/
 WORKDIR /catkin_ws
-#RUN /bin/bash -c 'git clone https://github.com/Team-Isaac-Polito/ReseQROS.git src/ReseQROS'
 COPY ./reseq_ros /catkin_ws/src/
 
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
@@ -14,12 +13,5 @@ RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; source devel/setup.bash'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
-#already done in FROM image ENTRYPOINT ["/ros_entrypoint.sh"]
-#RUN echo 'source /opt/ros/${ROS_DISTRO}/setup.bash' >> /root/.bashrc
 
-RUN echo 'source /catkin_ws/devel/setup.bash' >> /root/.bashrc
-
-CMD /bin/bash -c '. /root/.bashrc'
 CMD roslaunch reseq_ros ReseQ.launch
-
-WORKDIR /
