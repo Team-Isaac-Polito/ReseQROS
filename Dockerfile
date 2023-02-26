@@ -12,7 +12,6 @@ COPY reseq_ros/package.xml src/
 COPY reseq_ros/msg src/msg
 
 RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin_make'
-RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; source devel/setup.bash'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
 
