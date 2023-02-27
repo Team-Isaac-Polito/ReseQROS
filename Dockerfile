@@ -8,11 +8,10 @@ RUN mkdir -p /ros2_ws/src/
 WORKDIR /ros2_ws
 
 COPY reseq_msgs src/reseq_msgs
+COPY reseq_ros src/reseq_ros
 
 RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/install/setup.bash; colcon build'
 
 COPY ./docker_utils/entrypoint.sh /ros_entrypoint.sh
-
-COPY reseq_ros src/reseq_ros
 
 CMD roslaunch reseq_ros ReseQ.launch
