@@ -6,6 +6,7 @@ from reseq_ros.msg import Real_input, Real_output, Real_motor
 
 from time import sleep
 import matplotlib.pyplot as plt
+import numpy as np
 
 w_measure_head_right = []
 w_measure_head_left = []
@@ -37,21 +38,31 @@ def plot():
 
     fig, axs = plt.subplots(3,1,sharex=True)
 
-    fig.suptitle("Motor 0")
+    fig.suptitle("1st Module")
 
-    axs[0].plot(real_motor_0_wdx,label='wdx')
-    axs[0].plot(real_motor_0_wsx,label='wsx')
-    axs[0].set_ylabel('w')
+    N = len(real_motor_0_wdx)
+    t = np.linspace(0,6,N)
+
+    Nmdx = len(w_measure_head_right)
+    tmdx = np.linspace(0,6,Nmdx)
+
+    Nmsx = len(w_measure_head_left)
+    tmsx = np.linspace(0,6,Nmsx)
+
+    axs[0].plot(t,real_motor_0_wdx,label='wdx')
+    axs[0].plot(t,real_motor_0_wsx,label='wsx')
+    axs[0].set_ylabel('w [rad/s]')
     axs[0].legend()
 
-    axs[1].plot(real_motor_0_wdx,label='ref')
-    axs[1].plot(w_measure_head_right,label='meas')
+    axs[1].plot(t,real_motor_0_wdx,label='ref')
+    axs[1].plot(tmdx,w_measure_head_right,label='meas')
     axs[1].set_ylabel('dx')
     axs[1].legend()
 
-    axs[2].plot(real_motor_0_wsx,label='ref')
-    axs[2].plot(w_measure_head_left,label='meas')
+    axs[2].plot(t,real_motor_0_wsx,label='ref')
+    axs[2].plot(tmsx,w_measure_head_left,label='meas')
     axs[2].set_ylabel('sx')
+    axs[2].set_xlabel('t [s]')
     axs[2].legend()
 
     plt.show()
@@ -60,26 +71,39 @@ def plot():
 
     fig, axs = plt.subplots(4,1,sharex=True)
 
-    fig.suptitle("Motor 1")
+    fig.suptitle("2nd Module")
 
-    axs[0].plot(real_motor_1_wdx,label='wdx')
-    axs[0].plot(real_motor_1_wsx,label='wsx')
-    axs[0].set_ylabel('w')
+    N = len(real_motor_0_wdx)
+    t = np.linspace(0,6,N)
+
+    Nmdx = len(w_measure_middle_right)
+    tmdx = np.linspace(0,6,Nmdx)
+
+    Nmsx = len(w_measure_middle_left)
+    tmsx = np.linspace(0,6,Nmsx)  
+
+    Nmy = len(yaw_angle_middle)
+    tmy = np.linspace(0,6,Nmy)  
+
+    axs[0].plot(t,real_motor_1_wdx,label='wdx')
+    axs[0].plot(t,real_motor_1_wsx,label='wsx')
+    axs[0].set_ylabel('w [rad/s]')
     axs[0].legend()
 
-    axs[1].plot(real_motor_1_wdx,label='ref')
-    axs[1].plot(w_measure_middle_right,label='meas')
+    axs[1].plot(t,real_motor_1_wdx,label='ref')
+    axs[1].plot(tmdx,w_measure_middle_right,label='meas')
     axs[1].set_ylabel('dx')
     axs[1].legend()
 
-    axs[2].plot(real_motor_1_wsx,label='ref')
-    axs[2].plot(w_measure_middle_left,label='meas')
+    axs[2].plot(t,real_motor_1_wsx,label='ref')
+    axs[2].plot(tmsx,w_measure_middle_left,label='meas')
     axs[2].set_ylabel('sx')
     axs[2].legend()
 
-    axs[3].plot(real_motor_1_angle,label='ref')
-    axs[3].plot(yaw_angle_middle,label='meas')
-    axs[3].set_ylabel('angle')
+    axs[3].plot(t,real_motor_1_angle,label='ref')
+    axs[3].plot(tmy,yaw_angle_middle,label='meas')
+    axs[3].set_ylabel('angle [°]')
+    axs[3].set_xlabel('t [s]')
     axs[3].legend()
 
     plt.show()
@@ -88,32 +112,47 @@ def plot():
 
     fig, axs = plt.subplots(4,1,sharex=True)
 
-    fig.suptitle("Motor 2")
+    fig.suptitle("3rd Module")
 
-    axs[0].plot(real_motor_2_wdx,label='wdx')
-    axs[0].plot(real_motor_2_wsx,label='wsx')
-    axs[0].set_ylabel('w')
+    N = len(real_motor_0_wdx)
+    t = np.linspace(0,6,N)
+
+    Nmdx = len(w_measure_tail_right)
+    tmdx = np.linspace(0,6,Nmdx)
+
+    Nmsx = len(w_measure_tail_left)
+    tmsx = np.linspace(0,6,Nmsx)  
+
+    Nmy = len(yaw_angle_tail)
+    tmy = np.linspace(0,6,Nmy)    
+
+    axs[0].plot(t,real_motor_2_wdx,label='wdx')
+    axs[0].plot(t,real_motor_2_wsx,label='wsx')
+    axs[0].set_ylabel('w [rad/s]')
     axs[0].legend()
 
-    axs[1].plot(real_motor_2_wdx,label='ref')
-    axs[1].plot(w_measure_tail_right,label='meas')
+    axs[1].plot(t,real_motor_2_wdx,label='ref')
+    axs[1].plot(tmdx,w_measure_tail_right,label='meas')
     axs[1].set_ylabel('dx')
     axs[1].legend()
 
-    axs[2].plot(real_motor_2_wsx,label='ref')
-    axs[2].plot(w_measure_tail_left,label='meas')
+    axs[2].plot(t,real_motor_2_wsx,label='ref')
+    axs[2].plot(tmsx,w_measure_tail_left,label='meas')
     axs[2].set_ylabel('sx')
     axs[2].legend()
 
-    axs[3].plot(real_motor_2_angle,label='ref')
-    axs[3].plot(yaw_angle_tail,label='meas')
-    axs[3].set_ylabel('angle')
+    axs[3].plot(t,real_motor_2_angle,label='ref')
+    axs[3].plot(tmy,yaw_angle_tail,label='meas')
+    axs[3].set_ylabel('angle [°]')
+    axs[3].set_xlabel('t [s]')
     axs[3].legend()
 
     plt.show()
 
 def callback_Float32(dataa, var):
-    globals()[var].append(dataa.data)
+    global real_motor_0_wdx
+    if len(real_motor_0_wdx)>=1:
+        globals()[var].append(dataa.data)
 
 def callback_Real_motor(dataa,var):
     globals()[var+'_wdx'].append(dataa.wdx)
@@ -137,7 +176,7 @@ def listener():
     rospy.Subscriber('real_motor_1',Real_motor,callback_Real_motor,'real_motor_1')
     rospy.Subscriber('real_motor_2',Real_motor,callback_Real_motor,'real_motor_2')
 
-    sleep(6)
+    rospy.sleep(10)
     plot()
 
     rospy.spin()

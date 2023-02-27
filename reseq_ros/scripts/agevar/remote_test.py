@@ -46,6 +46,8 @@ if __name__ == '__main__':
         rospy.init_node('remote_test')
         rospy.loginfo("Hello! remote_test node started!")
 
+        rospy.sleep(2)
+
         publisher()
     except rospy.ROSInterruptException:
         pass
