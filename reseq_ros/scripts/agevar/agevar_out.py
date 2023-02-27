@@ -37,10 +37,10 @@ def saturation(wdx,wsx,angle):
 # Scales the output values used to feed the topic "motor_topic" from the real values to 0/1023
 def out_scaling(wdx,wsx):
     wdx=wdx/w_max # from -w_max/w_max to -1/1
-    wdx=int(wdx*1023) # from -1/1 to -1023/1023
+    wdx=int(wdx*512) # from -1/1 to -512/512
 
     wsx=wsx/w_max # from -w_max/w_max to 0/1
-    wsx=int(wsx*1023) # from -1/1 to -1023/1023
+    wsx=int(wsx*512) # from -1/1 to -512/512
 
     return wdx, wsx
 
