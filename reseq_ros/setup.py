@@ -19,6 +19,7 @@ setup(
     license='aVeryGoodLicense!',
     entry_points={
         'console_scripts': [
+            'communication = reseq_ros.communication:main',
             'movementTest = reseq_ros.movementTest:main',
             'turn_in_place = reseq_ros.turn_in_place:main',
         ],

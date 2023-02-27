@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-import definitions
+import reseq_ros.definitions as definitions
 import can
 import os
 import time
 import struct
-import rospy
-from reseq_ros.msg import Motor
+import rclpy
+from reseq_msgs.msg import Motor
 from std_msgs.msg import UInt16, Float32
 from geometry_msgs.msg import Twist
 
@@ -141,40 +141,55 @@ def recv_data(mess):
 		msg.data = float(val[0])
 		yawAngleTailPub.publish(msg)
 
+
+def main(args=None):
+	global canbus
+
+	global tempPub
+	global currLeftPub
+	global currRightPub
+	global tracLeftHeadPub
+	global tracRightHeadPub
+	global tracLeftMiddlePub
+	global tracRightMiddlePub
+	global tracLeftTailPub
+	global tracRightTailPub
+	global yawAngleMiddlePub
+	global yawAngleTailPub
+
+	rclpy.init(args=args)
+
+	node = rclpy.create_node('communication')
+	node.get_logger().info("Hello! communication node started!")
+
+	canbus = can.interface.Bus(channel='can1', bustype='socketcan')
+
+	motor_sub = node.create_subscription(Motor,"motor_topic",motor_list,10)
+	twist_sub = node.create_subscription(Twist,"twist_joystick",twist_list,10)
+	
+	# definizione variabili strutturate per ROS
+	tempPub=node.create_publisher(Float32,"temperature_topic",10)
+	currLeftPub=node.create_publisher(UInt16,"current_left_topic",10)
+	currRightPub=node.create_publisher(UInt16,"current_right_topic",10)
+
+	tracLeftHeadPub=node.create_publisher(Float32,"w_measure_head_left",10)
+	tracRightHeadPub=node.create_publisher(Float32,"w_measure_head_right",10)
+
+	tracLeftMiddlePub=node.create_publisher(Float32,"w_measure_middle_left",10)
+	tracRightMiddlePub=node.create_publisher(Float32,"w_measure_middle_right",10)
+
+	tracLeftTailPub=node.create_publisher(Float32,"w_measure_tail_left",10)
+	tracRightTailPub=node.create_publisher(Float32,"w_measure_tail_right",10)
+
+	yawAngleMiddlePub=node.create_publisher(Float32,"yaw_angle_middle",10)
+	yawAngleTailPub=node.create_publisher(Float32,"yaw_angle_tail",10)
+
+	listener = can.Listener()
+	listener.on_message_received = recv_data
+	notifier = can.Notifier(canbus, [listener])
+
+	rclpy.spin(node)
+
+
 if __name__ == '__main__':
-	try:
-		rospy.init_node('communication')
-		rospy.loginfo("Hello! communication node started!")
-
-		canbus = can.interface.Bus(channel='can1', bustype='socketcan')
-
-		rospy.Subscriber("motor_topic",Motor,motor_list)
-		rospy.Subscriber("twist_joystick",Twist,twist_list)
-		
-		# definizione variabili strutturate per ROS
-		tempPub=rospy.Publisher("temperature_topic",Float32,queue_size=10)
-		currLeftPub=rospy.Publisher("current_left_topic",UInt16,queue_size=10)
-		currRightPub=rospy.Publisher("current_right_topic",UInt16,queue_size=10)
-
-		tracLeftHeadPub=rospy.Publisher("w_measure_head_left",Float32,queue_size=10)
-		tracRightHeadPub=rospy.Publisher("w_measure_head_right",Float32,queue_size=10)
-
-		tracLeftMiddlePub=rospy.Publisher("w_measure_middle_left",Float32,queue_size=10)
-		tracRightMiddlePub=rospy.Publisher("w_measure_middle_right",Float32,queue_size=10)
-
-		tracLeftTailPub=rospy.Publisher("w_measure_tail_left",Float32,queue_size=10)
-		tracRightTailPub=rospy.Publisher("w_measure_tail_right",Float32,queue_size=10)
-
-		yawAngleMiddlePub=rospy.Publisher("yaw_angle_middle",Float32,queue_size=10)
-		yawAngleTailPub=rospy.Publisher("yaw_angle_tail",Float32,queue_size=10)
-		
-		listener = can.Listener()
-		listener.on_message_received = recv_data
-		notifier = can.Notifier(canbus, [listener])
-
-		
-		rospy.spin()
-
-	except rospy.ROSInterruptException:
-		pass
-
+	main()
