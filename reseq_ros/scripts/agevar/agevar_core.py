@@ -4,6 +4,7 @@ import rospy
 
 from reseq_ros.msg import Real_input
 from reseq_ros.msg import Real_output
+from std_msgs.msg import Float32
 
 from agevar_constant import *
 from agevar_kinematic import *
@@ -50,12 +51,27 @@ def callback(dataa):
         if num_module != module_vector[-1]: # for every module except the last one
             # kinematic calculations
             # for more details see agevar_kinematic.py
-            lin_vel,ang_vel = agevar_kinematic(lin_vel,ang_vel,delta,num_module,sign) 
+            if sign == 0:
+                angle = delta[num_module+1]
+            else:
+                angle = delta[num_module]
+                
+            lin_vel,ang_vel = agevar_kinematic(lin_vel,ang_vel,angle,num_module,sign) 
+
+def callback_middle(dataa):
+     global delta
+     delta[1]=dataa.data
+
+def callback_tail(dataa):
+     global delta
+     delta[2]=dataa.data
 
 # Receives the values of feed speed and curve radius of the first module from the remote controller
 # on the topic Real_input every time new values are available and it uses them to run the callback
 def listener():
     rospy.Subscriber("real_input",Real_input,callback)
+    rospy.Subscriber("yaw_angle_middle",Float32,callback_middle)
+    rospy.Subscriber("yaw_angle_tail",Float32,callback_tail)
     rospy.spin()
 
 # Main function 
