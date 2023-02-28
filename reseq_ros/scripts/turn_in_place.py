@@ -11,24 +11,24 @@ def publisher():
 
     while not rospy.is_shutdown():
 
-        vel = 500
+        omega = 1 #angular speed (max 1.15, the faster motor goes to 130 rpm)
 
-        motor_msg.wdx = -vel
-        motor_msg.wsx = -vel
+        motor_msg.wdx = -10*omega*(cos(delta_max+2*b*sin(delta_max)/d))/(2*a*r_eq)  #10x is for scaling RIGHT????? (change everywere if is not)
+        motor_msg.wsx = -10*omega*(cos(delta_max-2*b*sin(delta_max)/d))/(2*a*r_eq)
         motor_msg.angle = 0
         motor_msg.address = 21 # head
 
         pub.publish(motor_msg)
 
-        motor_msg.wdx = vel
-        motor_msg.wsx = -vel
+        motor_msg.wdx = 10*omega*2/(d*r_eq)
+        motor_msg.wsx = -10*omega*2/(d*r_eq)
         motor_msg.angle = 0
         motor_msg.address = 22 # middle
 
         pub.publish(motor_msg)
 
-        motor_msg.wdx = vel
-        motor_msg.wsx = vel
+        motor_msg.wdx = 10*omega*(cos(delta_max-2*b*sin(delta_max)/d))/(2*a*r_eq)
+        motor_msg.wsx = 10*omega*(cos(delta_max+2*b*sin(delta_max)/d))/(2*a*r_eq)
         motor_msg.angle = 0
         motor_msg.address = 23 # tail
 
