@@ -38,7 +38,7 @@ def plot():
 
     fig, axs = plt.subplots(3,1,sharex=True)
 
-    fig.suptitle("1st Module")
+    fig.suptitle("3rd Module")
 
     N = len(real_motor_0_wdx)
     t = list(np.linspace(0,6,num=N))
@@ -112,7 +112,7 @@ def plot():
 
     fig, axs = plt.subplots(4,1,sharex=True)
 
-    fig.suptitle("3rd Module")
+    fig.suptitle("1rd Module")
 
     N2 = len(real_motor_2_wdx)
     t2 = list(np.linspace(0,6,N2))
@@ -151,8 +151,17 @@ def plot():
 
 def callback_Float32(dataa, var):
     global real_motor_0_wdx
+
+    meas = dataa.data
+
     if len(real_motor_0_wdx)>=1:
-        globals()[var].append(dataa.data/100) # [rpm]
+        if var == 'yaw_angle_middle' or var == 'yaw_angle_tail':
+            if meas>180:
+                meas=-360+meas
+            globals()[var].append(meas) # [°]
+        else:
+            globals()[var].append(2*meas/100) # [rpm] 2x DA TOGLIEREEEEEE!!!
+
 
 def callback_Real_motor(dataa,var):
     globals()[var+'_wdx'].append(-dataa.wdx*60/(2*np.pi)) # [rpm]

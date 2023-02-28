@@ -2,7 +2,7 @@ from math import pi
 
 # GEOMETRIC CONSTANTS
 N_mod = 3       # [-] Number of modules of the robot
-a = 0.18        # [m] Distance between the center of every module and the previous yaw joint
+a = 0.16        # [m] Distance between the center of every module and the previous yaw joint
 b = 0.18        # [m] Distance between the center of every module and the following yaw joint
 d = 0.21        # [m] Distance between pair of equivalent wheels
 r_eq = 0.05     # [m] Radius of the equivalent wheels

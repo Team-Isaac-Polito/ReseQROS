@@ -45,13 +45,13 @@ def callback(dataa):
         Real_output_msg.sign = sign
         Real_output_msg.lin_vel = lin_vel
         Real_output_msg.ang_vel = ang_vel
-        Real_output_msg.delta = delta[num_module]
+        #Real_output_msg.delta = delta[num_module]
         pub[num_module].publish(Real_output_msg)
 
         if num_module != module_vector[-1]: # for every module except the last one
             # kinematic calculations
             # for more details see agevar_kinematic.py
-            if sign == 0:
+            if sign == 1:
                 angle = delta[num_module+1]
             else:
                 angle = delta[num_module]
@@ -59,12 +59,20 @@ def callback(dataa):
             lin_vel,ang_vel = agevar_kinematic(lin_vel,ang_vel,angle,num_module,sign) 
 
 def callback_middle(dataa):
-     global delta
-     delta[1]=dataa.data
+    global delta
+    angle = dataa.data
+    if angle<180:
+        delta[1]=angle
+    else:
+        delta[1]=-360+angle
 
 def callback_tail(dataa):
-     global delta
-     delta[2]=dataa.data
+    global delta
+    angle = dataa.data
+    if angle<180:
+        delta[2]=angle
+    else:
+        delta[2]=-360+angle
 
 # Receives the values of feed speed and curve radius of the first module from the remote controller
 # on the topic Real_input every time new values are available and it uses them to run the callback
