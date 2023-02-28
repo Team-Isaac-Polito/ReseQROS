@@ -9,10 +9,12 @@ r_eq = 0.05     # [m] Radius of the equivalent wheels
 delta_max = 35  # [°] Maximum delta (relative angle between two modules) achievable
 
 # PERFORMANCE CONSTANTS
-w_max = 2*pi                    # [rad/s] maximum rotation speed of the equivalent wheel (feed motor)
-lin_vel_max = (w_max*r_eq)/2    # [m/s]   maximum linear speed of every module (half of the maximum achievable linear speed in order to make feasible the turns)
 r_curv_min = 3*d                # [m]     minimum radius of curvature
 r_curv_max = 10*r_curv_min      # [m]     maximum radius of curvature
+
+w_max = 111*2*pi/60             # [rad/s] maximum rotation speed of the equivalent wheel (feed motor)
+w_c = w_max*r_curv_min/(r_curv_min+d/2)
+lin_vel_max = w_c*r_eq          # [m/s]   maximum linear speed of every module
 
 # DATA TRANSMISSION
 freq = 50        # [Hz] Transmission rate of the remote controller

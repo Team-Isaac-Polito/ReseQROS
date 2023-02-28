@@ -73,7 +73,7 @@ def plot():
 
     fig.suptitle("2nd Module")
 
-    N1 = len(real_motor_0_wdx)
+    N1 = len(real_motor_1_wdx)
     t1 = list(np.linspace(0,6,num=N1))
 
     Nmdx1 = len(w_measure_middle_right)
@@ -114,8 +114,8 @@ def plot():
 
     fig.suptitle("3rd Module")
 
-    N2 = len(real_motor_0_wdx)
-    t2 = list(np.linspace(0,6,N))
+    N2 = len(real_motor_2_wdx)
+    t2 = list(np.linspace(0,6,N2))
 
     Nmdx2 = len(w_measure_tail_right)
     tmdx2 = list(np.linspace(0,6,num=Nmdx2))
