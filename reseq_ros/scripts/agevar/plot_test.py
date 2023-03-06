@@ -4,12 +4,12 @@ import rospy
 from std_msgs.msg import Float32, UInt8
 from reseq_ros.msg import Real_input, Real_output, Real_motor
 
-from time import sleep
 import matplotlib.pyplot as plt
 import numpy as np
 
 w_measure_head_right = []
 w_measure_head_left = []
+yaw_angle_head = []
 
 real_motor_0_wdx = []
 real_motor_0_wsx = []
@@ -31,123 +31,56 @@ real_motor_2_wdx = []
 real_motor_2_wsx = []
 real_motor_2_angle = []
 
-def plot():
-    global w_measure_head_right, real_motor_0_wdx, w_measure_head_left, real_motor_0_wsx
-    global w_measure_middle_right, real_motor_1_wdx, w_measure_middle_left, real_motor_1_wsx, yaw_angle_middle, real_motor_1_angle
-    global w_measure_tail_right, real_motor_2_wdx, w_measure_tail_left, real_motor_2_wsx, yaw_angle_tail, real_motor_2_angle
+real_output_0_lin_vel = []
+real_output_0_ang_vel = []
 
-    fig, axs = plt.subplots(3,1,sharex=True)
+real_output_1_lin_vel = []
+real_output_1_ang_vel = []
 
-    fig.suptitle("3rd Module")
+real_output_2_lin_vel = []
+real_output_2_ang_vel = []
 
-    N = len(real_motor_0_wdx)
-    t = list(np.linspace(0,6,num=N))
+def plot(title='',topics=[],csv=0): # topic=['lin_vel','ang_vel','w_L','w_L_meas','w_R','w_R_meas','yaw_meas']
+    values = [globals()[topic] for topic in topics]
 
-    Nmdx = len(w_measure_head_right)
-    tmdx = list(np.linspace(0,6,num=Nmdx))
+    fig, axs = plt.subplots(2,3,sharex=True)
 
-    Nmsx = len(w_measure_head_left)
-    tmsx = list(np.linspace(0,6,num=Nmsx))
+    fig.suptitle(title)
 
-    axs[0].plot(t,real_motor_0_wdx,label='wdx')
-    axs[0].plot(t,real_motor_0_wsx,label='wsx')
-    axs[0].set_ylabel('w [rpm]')
-    axs[0].legend()
+    N = [len(value) for value in values]
+    t_sim = 6
+    t = [list(np.linspace(0,t_sim,num=n)) for n in N]
 
-    axs[1].plot(t,real_motor_0_wdx,label='ref')
-    axs[1].plot(tmdx,w_measure_head_right,label='meas')
-    axs[1].set_ylabel('dx')
-    axs[1].legend()
+    axs[0,0].plot(t[0],values[0],color='black')
+    axs[0,0].set_ylabel('lin_vel [m/s]')
+    axs[0,0].set_xlabel('t [s]')
 
-    axs[2].plot(t,real_motor_0_wsx,label='ref')
-    axs[2].plot(tmsx,w_measure_head_left,label='meas')
-    axs[2].set_ylabel('sx')
-    axs[2].set_xlabel('t [s]')
-    axs[2].legend()
+    axs[1,0].plot(t[1],values[1],color='black')
+    axs[1,0].set_ylabel('ang_vel [rad/s]')
+    axs[1,0].set_xlabel('t [s]')
 
-    plt.show()
+    axs[0,1].plot(t[2],values[2],color='green',label='w_L')
+    axs[0,1].plot(t[4],values[4],color='orange',label='w_R')
+    axs[0,1].set_ylabel('w motors (references) [rpm]')
+    axs[0,1].set_xlabel('t [s]')
+    axs[0,1].legend()
 
-    ''' ----------------------- '''
+    axs[1,1].plot(t[6],values[6],color='black')
+    axs[1,1].set_ylabel('yaw mesured [°]')
+    axs[1,1].set_xlabel('t [s]')
+    axs[1,1].legend()
 
-    fig, axs = plt.subplots(4,1,sharex=True)
+    axs[0,2].plot(t[2],values[2],color='red',label='reference')
+    axs[0,2].plot(t[3],values[3],color='black',label='measured')
+    axs[0,2].set_ylabel('w_L [rpm]')
+    axs[0,2].set_xlabel('t [s]')
+    axs[0,2].legend()
 
-    fig.suptitle("2nd Module")
-
-    N1 = len(real_motor_1_wdx)
-    t1 = list(np.linspace(0,6,num=N1))
-
-    Nmdx1 = len(w_measure_middle_right)
-    tmdx1 = list(np.linspace(0,6,num=Nmdx1))
-
-    Nmsx1 = len(w_measure_middle_left)
-    tmsx1 = list(np.linspace(0,6,num=Nmsx1))
-
-    Nmy1 = len(yaw_angle_middle)
-    tmy1 = list(np.linspace(0,6,num=Nmy1))
-
-    axs[0].plot(t1,real_motor_1_wdx,label='wdx')
-    axs[0].plot(t1,real_motor_1_wsx,label='wsx')
-    axs[0].set_ylabel('w [rpm]')
-    axs[0].legend()
-
-    axs[1].plot(t1,real_motor_1_wdx,label='ref')
-    axs[1].plot(tmdx1,w_measure_middle_right,label='meas')
-    axs[1].set_ylabel('dx')
-    axs[1].legend()
-
-    axs[2].plot(t1,real_motor_1_wsx,label='ref')
-    axs[2].plot(tmsx1,w_measure_middle_left,label='meas')
-    axs[2].set_ylabel('sx')
-    axs[2].legend()
-
-    axs[3].plot(t1,real_motor_1_angle,label='ref')
-    axs[3].plot(tmy1,yaw_angle_middle,label='meas')
-    axs[3].set_ylabel('angle [°]')
-    axs[3].set_xlabel('t [s]')
-    axs[3].legend()
-
-    plt.show()
-
-    ''' ---------------- '''
-
-    fig, axs = plt.subplots(4,1,sharex=True)
-
-    fig.suptitle("1rd Module")
-
-    N2 = len(real_motor_2_wdx)
-    t2 = list(np.linspace(0,6,N2))
-
-    Nmdx2 = len(w_measure_tail_right)
-    tmdx2 = list(np.linspace(0,6,num=Nmdx2))
-
-    Nmsx2 = len(w_measure_tail_left)
-    tmsx2 = list(np.linspace(0,6,num=Nmsx2)) 
-
-    Nmy2 = len(yaw_angle_tail)
-    tmy2 = list(np.linspace(0,6,num=Nmy2)) 
-
-    axs[0].plot(t2,real_motor_2_wdx,label='wdx')
-    axs[0].plot(t2,real_motor_2_wsx,label='wsx')
-    axs[0].set_ylabel('w [rpm]')
-    axs[0].legend()
-
-    axs[1].plot(t2,real_motor_2_wdx,label='ref')
-    axs[1].plot(tmdx2,w_measure_tail_right,label='meas')
-    axs[1].set_ylabel('dx')
-    axs[1].legend()
-
-    axs[2].plot(t2,real_motor_2_wsx,label='ref')
-    axs[2].plot(tmsx2,w_measure_tail_left,label='meas')
-    axs[2].set_ylabel('sx')
-    axs[2].legend()
-
-    axs[3].plot(t2,real_motor_2_angle,label='ref')
-    axs[3].plot(tmy2,yaw_angle_tail,label='meas')
-    axs[3].set_ylabel('angle [°]')
-    axs[3].set_xlabel('t [s]')
-    axs[3].legend()
-
-    plt.show()
+    axs[1,2].plot(t[4],values[4],color='red',label='reference')
+    axs[1,2].plot(t[5],values[5],color='black',label='measured')
+    axs[1,2].set_ylabel('w_R [rpm]')
+    axs[1,2].set_xlabel('t [s]')
+    axs[1,2].legend()
 
 def callback_Float32(dataa, var):
     global real_motor_0_wdx
@@ -168,38 +101,39 @@ def callback_Real_motor(dataa,var):
     globals()[var+'_wsx'].append(-dataa.wsx*60/(2*np.pi)) # [rpm]
     globals()[var+'_angle'].append(dataa.angle)
 
+def callback_Real_output(dataa,var):
+    globals()[var+'_lin_vel'].append(dataa.lin_vel) # [m/s]
+    globals()[var+'_ang_vel'].append(dataa.ang_vel) # [rad/s]
+
 def listener():
 
-    sub1=rospy.Subscriber('w_measure_head_left',Float32,callback_Float32,'w_measure_head_left')
-    sub2=rospy.Subscriber('w_measure_head_right',Float32,callback_Float32,'w_measure_head_right')
+    subs = [rospy.Subscriber('w_measure_head_left',Float32,callback_Float32,'w_measure_head_left'),
+            rospy.Subscriber('w_measure_head_right',Float32,callback_Float32,'w_measure_head_right'),
 
-    sub3=rospy.Subscriber('w_measure_middle_left',Float32,callback_Float32,'w_measure_middle_left')
-    sub4=rospy.Subscriber('w_measure_middle_right',Float32,callback_Float32,'w_measure_middle_right')
-    sub5=rospy.Subscriber('yaw_angle_middle',Float32,callback_Float32,'yaw_angle_middle')
+            rospy.Subscriber('w_measure_middle_left',Float32,callback_Float32,'w_measure_middle_left'),
+            rospy.Subscriber('w_measure_middle_right',Float32,callback_Float32,'w_measure_middle_right'),
+            rospy.Subscriber('yaw_angle_middle',Float32,callback_Float32,'yaw_angle_middle'),
 
-    sub6=rospy.Subscriber('w_measure_tail_left',Float32,callback_Float32,'w_measure_tail_left')
-    sub7=rospy.Subscriber('w_measure_tail_right',Float32,callback_Float32,'w_measure_tail_right')
-    sub8=rospy.Subscriber('yaw_angle_tail',Float32,callback_Float32,'yaw_angle_tail')
+            rospy.Subscriber('w_measure_tail_left',Float32,callback_Float32,'w_measure_tail_left'),
+            rospy.Subscriber('w_measure_tail_right',Float32,callback_Float32,'w_measure_tail_right'),
+            rospy.Subscriber('yaw_angle_tail',Float32,callback_Float32,'yaw_angle_tail'),
 
-    sub9=rospy.Subscriber('real_motor_0',Real_motor,callback_Real_motor,'real_motor_0')
-    sub10=rospy.Subscriber('real_motor_1',Real_motor,callback_Real_motor,'real_motor_1')
-    sub11=rospy.Subscriber('real_motor_2',Real_motor,callback_Real_motor,'real_motor_2')
+            rospy.Subscriber('real_motor_0',Real_motor,callback_Real_motor,'real_motor_0'),
+            rospy.Subscriber('real_motor_1',Real_motor,callback_Real_motor,'real_motor_1'),
+            rospy.Subscriber('real_motor_2',Real_motor,callback_Real_motor,'real_motor_2'),
+
+            rospy.Subscriber('real_output_0',Real_output,callback_Real_output,'real_output_0'),
+            rospy.Subscriber('real_output_1',Real_output,callback_Real_output,'real_output_1'),
+            rospy.Subscriber('real_output_2',Real_output,callback_Real_output,'real_output_2')]
 
     rospy.sleep(10)
 
-    sub1.unregister()
-    sub2.unregister()
-    sub3.unregister()
-    sub4.unregister()
-    sub5.unregister()
-    sub6.unregister()
-    sub7.unregister()
-    sub8.unregister()
-    sub9.unregister()
-    sub10.unregister()
-    sub11.unregister()
+    [sub.unregister() for sub in subs]
 
-    plot()
+    plot('MODULE 1',['real_output_0_lin_vel', 'real_output_0_ang_vel', 'real_motor_0_wsx', 'w_measure_head_left', 'real_motor_0_wdx', 'w_measure_head_right','yaw_angle_head'])
+    plot('MODULE 2',['real_output_1_lin_vel', 'real_output_1_ang_vel', 'real_motor_1_wsx', 'w_measure_middle_left', 'real_motor_1_wdx', 'w_measure_middle_right','yaw_angle_middle'])
+    plot('MODULE 3',['real_output_2_lin_vel', 'real_output_2_ang_vel', 'real_motor_2_wsx', 'w_measure_tail_left', 'real_motor_2_wdx', 'w_measure_tail_right','yaw_angle_tail'])    
+    plt.show()
 
     rospy.spin()
 
