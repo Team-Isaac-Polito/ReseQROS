@@ -65,6 +65,7 @@ def callback_middle(dataa):
         delta[1]=angle
     else:
         delta[1]=-360+angle
+    # delta[1] = 0 # to force the yaw angle to 0
 
 def callback_tail(dataa):
     global delta
@@ -73,6 +74,7 @@ def callback_tail(dataa):
         delta[2]=angle
     else:
         delta[2]=-360+angle
+    # delta[2] = 0 # to force the yaw angle to 0
 
 # Receives the values of feed speed and curve radius of the first module from the remote controller
 # on the topic Real_input every time new values are available and it uses them to run the callback

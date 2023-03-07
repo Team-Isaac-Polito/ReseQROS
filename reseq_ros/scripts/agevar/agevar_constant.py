@@ -12,7 +12,10 @@ delta_max = 35  # [°] Maximum delta (relative angle between two modules) achiev
 r_curv_min = 3*d                # [m]     minimum radius of curvature
 r_curv_max = 10*r_curv_min      # [m]     maximum radius of curvature
 
-w_max = 111*2*pi/60             # [rad/s] maximum rotation speed of the equivalent wheel (feed motor)
+rpm2rads = 2*pi/60
+rads2rpm = 60/(2*pi)
+sat = 5/7 # saturation security coefficient
+w_max = 65*sat*rpm2rads           # [rad/s] maximum rotation speed of the equivalent wheel (feed motor)
 w_c = w_max*r_curv_min/(r_curv_min+d/2)
 lin_vel_max = w_c*r_eq          # [m/s]   maximum linear speed of every module
 

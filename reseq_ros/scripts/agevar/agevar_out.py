@@ -4,7 +4,7 @@ import rospy
 from reseq_ros.msg import Real_output, Motor, Real_motor
 
 from agevar_constant import *
-from math import degrees
+from math import degrees, ceil, floor
 
 '''
 OUTPUT PROCESSING:
@@ -36,11 +36,16 @@ def saturation(wdx,wsx,angle):
 
 # Scales the output values used to feed the topic "motor_topic" from the real values to 0/1023
 def out_scaling(wdx,wsx):
-    wdx=wdx/w_max # from -w_max/w_max to -1/1
-    wdx=int(wdx*512) # from -1/1 to -512/512
 
-    wsx=wsx/w_max # from -w_max/w_max to 0/1
-    wsx=int(wsx*512) # from -1/1 to -512/512
+    wdx = wdx*rads2rpm # [rpm]
+    wsx = wsx*rads2rpm # [rpm]
+
+    # if wdx > wsx:
+    #     wdx=ceil(wdx*rads2rpm) # [rpm]
+    #     wsx=floor(wsx*rads2rpm) # [rpm]
+    # else:
+    #     wdx=floor(wdx*rads2rpm) # [rpm]
+    #     wsx=ceil(wsx*rads2rpm) # [rpm]
 
     return wdx, wsx
 
@@ -75,12 +80,12 @@ def callback(dataa):
     if sign == 0:  # backward
         wsx, wdx = -wsx,-wdx
 
+    wdx, wsx = out_scaling(wdx,wsx)
+
     real_motor_msg.wdx = wdx
     real_motor_msg.wsx = wsx
     real_motor_msg.angle = angle
     pub_rmt[num_module].publish(real_motor_msg)
-
-    wdx, wsx = out_scaling(wdx,wsx)
 
     motor_msg.wdx = wdx
     motor_msg.wsx = wsx

@@ -22,7 +22,7 @@ def filter(lin_vel,r_curv):
 # Scales the inputs from topic "twist_joystick" from 0/1023 to their real values
 def in_scaling(lin_vel,r_curv):
     # lin_vel:
-    lin_vel = -(lin_vel/512)*lin_vel_max # from -512/511 to lin_vel_max/-lin_vel_max
+    lin_vel = (lin_vel/512)*lin_vel_max # from 512/-511 to lin_vel_max/-lin_vel_max
 
     # r_curv:
     if r_curv >= 0:

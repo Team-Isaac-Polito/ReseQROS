@@ -2,7 +2,7 @@
 
 import rospy
 from std_msgs.msg import Float32, UInt8
-from reseq_ros.msg import Real_input, Real_output, Real_motor
+from reseq_ros.msg import Real_input, Real_output, Real_motor, Motor
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -68,6 +68,7 @@ def plot(title='',topics=[],csv=0): # topic=['lin_vel','ang_vel','w_L','w_L_meas
     axs[1,1].plot(t[6],values[6],color='black')
     axs[1,1].set_ylabel('yaw mesured [°]')
     axs[1,1].set_xlabel('t [s]')
+    axs[1,1].set_ylim([-35,35])
     axs[1,1].legend()
 
     axs[0,2].plot(t[2],values[2],color='red',label='reference')
@@ -93,12 +94,12 @@ def callback_Float32(dataa, var):
                 meas=-360+meas
             globals()[var].append(meas) # [°]
         else:
-            globals()[var].append(2*meas/100) # [rpm] 2x DA TOGLIEREEEEEE!!!
+            globals()[var].append(meas) # [rpm]
 
 
 def callback_Real_motor(dataa,var):
-    globals()[var+'_wdx'].append(-dataa.wdx*60/(2*np.pi)) # [rpm]
-    globals()[var+'_wsx'].append(-dataa.wsx*60/(2*np.pi)) # [rpm]
+    globals()[var+'_wdx'].append(dataa.wdx) # [rpm]
+    globals()[var+'_wsx'].append(dataa.wsx) # [rpm]
     globals()[var+'_angle'].append(dataa.angle)
 
 def callback_Real_output(dataa,var):
