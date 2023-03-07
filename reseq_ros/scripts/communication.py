@@ -22,8 +22,9 @@ def interval(data):
 	return data if 0 <= data <= 1023 else 1023 if data > 1023 else 0 
 
 def motor_list(dataa):
-	dataa.wsx = dataa.wsx*-10
-	dataa.wdx = dataa.wdx*-10
+	#RPM to centiRPM scaling
+	dataa.wsx = dataa.wsx*100
+	dataa.wdx = dataa.wdx*100
 
 	out = int(dataa.wsx).to_bytes(2, byteorder='little', signed=True)
 	msg = can.Message(arbitration_id=int(dataa.address),data=[definitions.DATA_TRACTION_LEFT, out[0], out[1]],is_extended_id=False)
@@ -97,34 +98,34 @@ def recv_data(mess):
 	elif mess.data[0] == definitions.SEND_TRACTION_LEFT_SPEED_HEAD:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracLeftHeadPub.publish(msg)
 	elif mess.data[0] == definitions.SEND_TRACTION_RIGHT_SPEED_HEAD:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracRightHeadPub.publish(msg)
 
 	elif mess.data[0] == definitions.SEND_TRACTION_LEFT_SPEED_MIDDLE:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracLeftMiddlePub.publish(msg)
 	elif mess.data[0] == definitions.SEND_TRACTION_RIGHT_SPEED_MIDDLE:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracRightMiddlePub.publish(msg)
 
 	elif mess.data[0] == definitions.SEND_TRACTION_LEFT_SPEED_TAIL:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracLeftTailPub.publish(msg)
 	elif mess.data[0] == definitions.SEND_TRACTION_RIGHT_SPEED_TAIL:
 		msg = Float32()
 		val = struct.unpack('f',bytearray([mess.data[4],mess.data[3],mess.data[2],mess.data[1]]))
-		msg.data = float(val[0])
+		msg.data = float(val[0])/100.0 #scale centiRPM to RPM
 		tracRightTailPub.publish(msg)
 
 
