@@ -87,8 +87,8 @@ def callback(dataa):
     real_motor_msg.angle = angle
     pub_rmt[num_module].publish(real_motor_msg)
 
-    motor_msg.wdx = wdx
-    motor_msg.wsx = wsx
+    motor_msg.wdx = wdx * 100.0
+    motor_msg.wsx = wsx * 100.0
     motor_msg.angle = angle
     motor_msg.address = address[num_module]
     pub_mt.publish(motor_msg) # send the values of wdx,wsx,angle on the topic "motor_topic"

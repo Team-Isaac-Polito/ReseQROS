@@ -5,8 +5,9 @@
 		<param name="port"              type="string"               value="/dev/ttyACM0"/>
 		<param name="baud"              type="int"                  value="57600"/>
 
-	<node name="communication" pkg="reseq_ros" type="communication.py" output="screen"/>
 	</node>-->
+
+	<node name="communication" pkg="reseq_ros" type="communication.py" output="screen"/>
 	
 	<node name="agevar_in" pkg="reseq_ros" type="agevar_in.py" output="screen"/>
 	<node name="agevar_core" pkg="reseq_ros" type="agevar_core.py" output="screen"/>

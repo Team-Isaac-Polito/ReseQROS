@@ -62,8 +62,8 @@ def r_curv2ang(lin_vel,r_curv):
 
 # Callback function
 def callback(dataa):
-    lin_vel = dataa.linear.y
-    r_curv = dataa.linear.x
+    lin_vel = -dataa.linear.y
+    r_curv = -dataa.linear.x
 
     lin_vel,r_curv=filter(lin_vel,r_curv)
     lin_vel,r_curv = in_scaling(lin_vel,r_curv)
