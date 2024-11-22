@@ -1,0 +1,15 @@
+name: 🚀 Self-Hosted Runner Workflow
+on:
+  push:
+    branches:
+      - test-gh-action
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run a script
+        run: echo "Hello from self-hosted runner"
